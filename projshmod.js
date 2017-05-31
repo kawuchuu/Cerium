@@ -1,4 +1,5 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const config = require("./config.json");
 const client = new Discord.Client();
 
 function commandIs(str, msg){
@@ -74,4 +75,4 @@ client.on('message', message =>{
     }
 }});
 
-client.login('Your own token');
+client.login(config.token);
