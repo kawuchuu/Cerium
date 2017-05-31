@@ -19,7 +19,7 @@ function hasRole(mem, role){
 }
 
 client.on('ready', () => {
-    console.log('Ready, type mod:ping to test')
+    console.log('[INFO] Ready!')
 });
 
 client.on('message', message =>{
@@ -46,7 +46,7 @@ client.on('message', message =>{
             message.channel.send('spam');
             message.channel.send('spam');
         } else {
-            console.log('WARNING: A non-staff member tried to run mod:spam')
+            console.log('[WARNING] A non-staff member tried to run mod:spam.')
             message.channel.send(':no_entry_sign: NO: You are not a member of staff.')
         }
     }
@@ -67,10 +67,11 @@ client.on('message', message =>{
                     msg=parseInt(args[1]) + 1;
                 }
                 message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(console.error);
-                message.reply(":white_check_mark: OK: Deleted " + msg +" messages. (Including the command you just entered, honeyfry. I'll fix that in the future.)");
+                message.reply(":white_check_mark: OK: Deleted " + msg +" messages. (Including the command you just entered!");
+                console.log("[INFO] A staff member deleted" + msg + " messages.")
             }
     } else {
-        console.log('WARNING: A non-staff member tried to run mod:delete')
+        console.log("[WARNING] A non-staff member tried to delete" + msg + " messages using mod:delete.")
         message.channel.send(":no_entry_sign: NO: You're not a member of staff.")
     }
 }});
