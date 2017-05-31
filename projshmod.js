@@ -38,7 +38,7 @@ client.on('message', message =>{
     }
     //mod:spam command
     if(commandIs("spam", message)){
-        if(hasRole(message.member, "Admin") || hasRole(message.member, "Moderator") || hasRole(message.member, "Staff")){
+        if(hasRole(message.member, "Admin") || hasRole(message.member, "Moderator") || hasRole(message.member, "Staff") || hasRole(message.member, "Owner")){
             console.log('A staff member ran mod:spam')
             message.channel.send('spam');
             message.channel.send('spam');
@@ -56,7 +56,7 @@ client.on('message', message =>{
     }
     //mod:delete command
     if(commandIs("delete", message)){
-        if(hasRole(message.member, "Admin") || hasRole(message.member, "Moderator") || hasRole(message.member, "Staff")){
+        if(hasRole(message.member, "Admin") || hasRole(message.member, "Moderator") || hasRole(message.member, "Staff") || hasRole(message.member, "Owner")){
             if(args.length >= 3){
                 message.channel.send(':no_entry_sign: ERROR: Too many arguments. Usage: `mod:delete [amount]`');
             } else {
