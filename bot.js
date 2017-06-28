@@ -19,6 +19,7 @@ const config = require("./config.json");
 const YTDL = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
+const pjmVer = "0.1"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -175,19 +176,25 @@ bot.on("message", function(message){
                 message.reply(":white_check_mark: OK: Deleted " + msg +" messages. (Including the command you just entered!)");
                 console.log("[INFO] A staff member deleted " + msg + " messages.");
             }
-    } else {
-        message.channel.send(":no_entry_sign: ERROR: Cannot use that command in this server.");
-    }
+        } else {
+            message.channel.send(":no_entry_sign: ERROR: Cannot use that command in this server.");
+        }
         break;
-        //!spam command
-        case "spam":
-            message.channel.send("This is spam");
-            message.channel.send("This is spam");
-            message.channel.send("This is spam");
-            message.channel.send("This is spam");
-            message.channel.send("This is spam");
+        //!version command
+        case "version":
+            message.author.send("ProJshMod's version is currently v." + pjmVer);
+            message.reply(":arrow_left: Check DMs.");
+        break;
+        case "poweroff":
+            if (message.author.id == 250726367849611285) {
+                process.exit();
+        } else {
+            message.reply(":no_entry_sign: NO: Only projsh_ is allowed to turn the bot off.");
+        }
         break;
     }
 });
 
-bot.login(config.token);
+bot.login(config.token).catch(function() {
+    console.log("[ERROR] Failed to login.");
+});
