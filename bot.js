@@ -19,7 +19,7 @@ const config = require("./config.json");
 const YTDL = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.1"
+const pjmVer = "0.2"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -58,7 +58,7 @@ function setGame() {
             presence.game.name = "songs in a voice channel";
             break;
         case 7:
-            presence.game.name = "england is my city";
+            presence.game.name = "crashing myself";
             break;
     }
     bot.user.setPresence(presence);
@@ -83,6 +83,14 @@ function hasRole(mem, role){
     } else {
         return false;
     }
+}
+
+function userString(user) {
+    var u = user;
+    if (user.user != null) {
+        u = user.user;
+    }
+    return u.tag;
 }
 
 var servers = {}
@@ -164,7 +172,7 @@ bot.on("message", function(message){
         case "del":
             if(message.guild.id == 300508987126710283){
             if(args.length >= 3){
-                message.channel.send(':no_entry_sign: ERROR: Too many arguments. Usage: `!delete [amount]`');
+                message.channel.send(':no_entry_sign: ERROR: Too many arguments. Usage: `!del [amount]`');
             } else {
                 var msg;
                 if(args.length === 1){
@@ -182,17 +190,82 @@ bot.on("message", function(message){
         break;
         //!version command
         case "version":
-            message.author.send("ProJshMod's version is currently v." + pjmVer);
-            message.reply(":arrow_left: Check DMs.");
+            message.channel.send("ProJshMod's version is currently v." + pjmVer);
         break;
+        //!poweroff command
         case "poweroff":
             if (message.author.id == 250726367849611285) {
+                message.channel.send("Exit");
                 process.exit();
         } else {
             message.reply(":no_entry_sign: NO: Only projsh_ is allowed to turn the bot off.");
         }
         break;
-    }
+        case "nick":
+            var msg = message.content
+            var nick = msg.substring(5);
+            if (args.length === 1) {
+                message.reply(":white_check_mark: OK: I cleared your nickname.");
+                message.member.setNickname(nick);
+            } else {
+                message.reply(":white_check_mark: OK: Set your nickname to `" + nick + "`");
+                message.member.setNickname(nick);
+            }
+        break;
+        //!help command
+        case "help":
+            var msgHelp = "Here are the commands everyone can use:\n" +
+                "**(ALL COMMANDS ARE PREFIXED WITH !)**\n```\n" +
+                "ping            Reply's with a message.\n" +
+                "play [YT Link]  Plays a YouTube video in the current voice channel.\n" +
+                "skip            Skips a song in the song queue.\n" +
+                "version         Reply's with ProJshMod's current version.\n" +
+                "avatar          Sends a link to your avatar's URL.\n" +
+                "nick [nickname] Set's your nickname.\n" +
+                "uinfo           Shows information about your user account. (currently in beta)\n```\n";
+            if (message.author.id == 250726367849611285) { //Only projsh_ can see this
+                msgHelp = msgHelp + "And here are the commands projsh_ can use:\n```\n" +
+                "poweroff        Turns off the bot.\n```\n";
+            }
+        message.author.send(msgHelp);
+        message.reply(":arrow_left: Check DMs.");
+        message.delete();
+        break;
+        //!uavatar command
+        case "avatar":
+            var icon = message.author.displayAvatarURL
+            message.channel.send("Here's your avatar URL: " + icon)
+        break;
+        //test uinfo command (taken & modified from vicr123/AstralMod)
+        case "uinfo":
+            var member = message.member;
+                embed = new Discord.RichEmbed("testembed");
+                embed.setColor("#af84ff");
+                embed.setAuthor(userString(member), member.user.displayAvatarURL);
+                embed.setDescription("Information about " + userString(member));
+                {
+                    var namemsg = "**Display Name**  " + member.displayName + "\n";
+                        if (member.nickname != null) {
+                            namemsg += "**Nickname**  " + member.nickname + "\n";
+                        } else {
+                            namemsg += "**Nickname**  None\n";
+                        }
+                        namemsg += "**Username**  " + member.user.username + "\n";
+                        embed.addField("Names", namemsg);
+                }
+                {
+                    var timemsg = "**User Created**  " + member.user.createdAt.toUTCString() + "\n";
+                    if (member.joinedAt.getTime() == 0) {
+                        msg += "**User Joined**  ...Discord isn't working correctly. Check back later.\n";
+                    } else {
+                        timemsg +="**User Joined**  " + member.joinedAt.toUTCString();
+                    }
+                    embed.addField("Timestamps", timemsg);
+                }
+                embed.setFooter("ID: " + member.user.id);
+                message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command is loosely inspired by vicr123/AstralMod.", {embed: embed});
+        }
+        
 });
 
 bot.login(config.token).catch(function() {
