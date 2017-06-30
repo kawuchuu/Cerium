@@ -1,0 +1,23 @@
+{
+  "name": "projshmod",
+  "version": "1.0.0",
+  "description": "A moderation bot for Discord. It's in early stages and is nowhere near done.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/projsh_/ProjshMod.git"
+  },
+  "author": "projsh_",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/projsh_/ProjshMod/issues"
+  },
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "opusscript": "0.0.3",
+    "ytdl-core": "0.14.4"
+  }
+}
