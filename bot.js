@@ -202,14 +202,17 @@ bot.on("message", function(message){
         }
         break;
         case "nick":
-            var msg = message.content
-            var nick = msg.substring(5);
-            if (args.length === 1) {
-                message.reply(":white_check_mark: OK: I cleared your nickname.");
-                message.member.setNickname(nick);
-            } else {
-                message.reply(":white_check_mark: OK: Set your nickname to `" + nick + "`");
-                message.member.setNickname(nick);
+            if (message.author.id == 250726367849611285) {
+                message.reply("I can't edit your nickname. Bots can't edit server owners.");
+            } else { var msg = message.content
+                var nick = msg.substring(5);
+                if (args.length === 1) {
+                    message.reply(":white_check_mark: OK: I cleared your nickname.");
+                    message.member.setNickname(nick);
+                } else {
+                    message.reply(":white_check_mark: OK: Set your nickname to `" + nick + "`");
+                    message.member.setNickname(nick);
+                }
             }
         break;
         //!help command
