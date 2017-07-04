@@ -19,7 +19,7 @@ const config = require("./config.json");
 const YTDL = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.3"
+const pjmVer = "0.3.1"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -196,11 +196,11 @@ bot.on("message", function(message){
         var server = servers[message.guild.id];
 
         server.queue.push(args[1]);
+        message.delete();
+        message.reply(":white_check_mark: OK: Added to queue.");
 
         if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
             play(connection, message);
-            message.reply(":white_check_mark: OK: Playing in your Voice Channel.");
-            message.delete();
         });
         break;
         //!skip command
@@ -208,7 +208,7 @@ bot.on("message", function(message){
             var server = servers[message.guild.id];
 
             if (server.dispatcher) server.dispatcher.end()
-            message.reply(":white_check_mark: OK: Skipped a song.");
+            message.reply(":white_check_mark: OK: Skipped a track.");
             message.delete();
         break;
         //!stop command (doesn't work at the moment)
