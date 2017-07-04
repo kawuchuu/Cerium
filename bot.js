@@ -19,7 +19,7 @@ const config = require("./config.json");
 const YTDL = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.2"
+const pjmVer = "0.3"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -35,7 +35,7 @@ function setGame() {
     presence.status = "online";
     presence.afk = false;
     
-    switch (Math.floor(Math.random() * 1000) % 8) {
+    switch (Math.floor(Math.random() * 1000) % 9) {
         case 0:
             presence.game.name = "binary code";
             break;
@@ -60,6 +60,8 @@ function setGame() {
         case 7:
             presence.game.name = "crashing myself";
             break;
+        case 8:
+            presence.game.name = "v." + pjmVer;
     }
     bot.user.setPresence(presence);
 }
@@ -119,7 +121,55 @@ bot.on("message", function(message){
     switch (args[0]) {
         //!ping command
         case "ping":
-            message.channel.send(":warning: PONG!");
+            switch (Math.floor(Math.random() * 50) % 7) {
+                case 0:
+                    message.channel.send(":warning: PONG! Tenzij u nederlands weet, vertaalt u dit met behulp van een vertaler!");
+                    break;
+                case 1:
+                    message.channel.send(":warning: PONG! The burgers are better at Hungry Jacks!");
+                    break;
+                case 2:
+                    message.channel.send(":warning: PONG! Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
+                    break;
+                case 3:
+                    message.channel.send(":warning: PONG! Hi friend! Hi friend! Hi friend!");
+                    break;
+                case 4:
+                    message.channel.send(":warning: PONG! Helo! i like minecruhft uhnd roblox dee're de bezt guhmez of uhl time lel");
+                    break;
+                case 5:
+                    message.channel.send(":warning: PONG! Type in !help for more commands!");
+                    break;
+                case 6:
+                    message.channel.send(":warning: PONG! This is a test message!");
+                    break;
+            }
+        break;
+        //!pong command
+        case "pong":
+            switch (Math.floor(Math.random() * 50) % 7) {
+                case 0:
+                    message.channel.send(":warning: PING! I knew you would type this in :wink:");
+                    break;
+                case 1:
+                    message.channel.send(":warning: PING! i like pizza yoy c:");
+                    break;
+                case 2:
+                    message.channel.send(":warning: PING! Have a glass of chocolate milk!");
+                    break;
+                case 3:
+                    message.channel.send(":warning: PING! <3");
+                    break;
+                case 4:
+                    message.channel.send(":warning: PING! i love github <3");
+                    break;
+                case 5:
+                    message.channel.send(":warning: PING! Hey, Vsauce, Michael here");
+                    break;
+                case 6:
+                    message.channel.send(":warning: PING! subscrible to dolan dark plz kthx");
+                    break;
+            }
         break;
         //!play command
         case "play":
@@ -163,10 +213,16 @@ bot.on("message", function(message){
         break;
         //!stop command (doesn't work at the moment)
         case "stop":
-            //var server = servers[message.guild.id];
-
-            //if (message.guild.voiceConnection) message.guild.voiceConnection.disconnect();
-            message.reply(":information_source: Sorry, but there's currently a bug with `opusscript` that will crash the bot if stopped. This command has been disabled for now. Alternatively, you can continue typing in `!skip` until the queue has finished.");
+            var server = servers[message.guild.id];
+            if (message.guild.voiceConnection)
+            {
+            for (var i = server.queue.length - 1; i >= 0; i--) 
+            {
+                server.queue.splice(i, 1);
+            }
+            server.dispatcher.end();
+            message.reply(":white_check_mark: OK: Left the voice channel.");
+            }
         break;
         //!del command
         case "del":
@@ -181,7 +237,7 @@ bot.on("message", function(message){
                     msg=parseInt(args[1]) + 1;
                 }
                 message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(console.error);
-                message.reply(":white_check_mark: OK: Deleted " + msg +" messages. (Including the command you just entered!)");
+                message.reply(":white_check_mark: OK: Deleted " + msg +" messages.");
                 console.log("[INFO] A staff member deleted " + msg + " messages.");
             }
         } else {
@@ -195,15 +251,16 @@ bot.on("message", function(message){
         //!poweroff command
         case "poweroff":
             if (message.author.id == 250726367849611285) {
-                message.channel.send("Exit");
                 process.exit();
         } else {
             message.reply(":no_entry_sign: NO: Only projsh_ is allowed to turn the bot off.");
         }
         break;
         case "nick":
-            if (message.author.id == 250726367849611285) {
-                message.reply("I can't edit your nickname. Bots can't edit server owners.");
+            if (hasRole(message.member, "Owner")) {
+                message.reply("I can't edit your nickname. You've got a higher role than me, so I can't edit you.");
+            } else if (message.author.id == 204897326383235072) {
+                message.reply("I can't edit your nickname. You're the server owner, so I can't edit you.");
             } else { var msg = message.content
                 var nick = msg.substring(5);
                 if (args.length === 1) {
@@ -215,16 +272,36 @@ bot.on("message", function(message){
                 }
             }
         break;
+        case "uptime":
+            var time;
+            var uptime = parseInt(bot.uptime);
+            uptime = Math.floor(uptime / 1000);
+            var uptimeMinutes = Math.floor(uptime / 60);
+            var minutes = uptime % 60;
+            var hours = 0;
+            while (uptimeMinutes >= 60) {
+                hours++;
+                uptimeMinutes = uptimeMinutes - 60;
+            }
+            if (uptimeMinutes < 10) {
+                time = hours + ":0" + uptimeMinutes
+            } else {
+                time = hours + ":" + uptimeMinutes
+            }
+            message.channel.send("ProJshMod has been online for " + time + " hours.");
+        break;
         //!help command
         case "help":
             var msgHelp = "Here are the commands everyone can use:\n" +
                 "**(ALL COMMANDS ARE PREFIXED WITH !)**\n```\n" +
-                "ping            Reply's with a message.\n" +
+                "ping | pong     Reply's with a message.\n" +
                 "play [YT Link]  Plays a YouTube video in the current voice channel.\n" +
                 "skip            Skips a song in the song queue.\n" +
+                "stop            Leaves the voice channel.\n" +
                 "version         Reply's with ProJshMod's current version.\n" +
                 "avatar          Sends a link to your avatar's URL.\n" +
                 "nick [nickname] Set's your nickname.\n" +
+                "uptime          Shows how long ProJshMod has been online without restarting.\n" +
                 "uinfo           Shows information about your user account. (currently in beta)\n```\n";
             if (message.author.id == 250726367849611285) { //Only projsh_ can see this
                 msgHelp = msgHelp + "And here are the commands projsh_ can use:\n```\n" +
@@ -232,7 +309,6 @@ bot.on("message", function(message){
             }
         message.author.send(msgHelp);
         message.reply(":arrow_left: Check DMs.");
-        message.delete();
         break;
         //!uavatar command
         case "avatar":
