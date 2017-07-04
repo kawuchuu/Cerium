@@ -1,19 +1,20 @@
+//Thanks Aren! <3
 {
-  "name": "projshmod",
-  "version": "1.0.0",
+  "name": "ProJshMod",
+  "version": "0.3.1",
   "description": "A moderation bot for Discord. It's in early stages and is nowhere near done.",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "nodemon bot.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/projsh_/ProjshMod.git"
+    "url": "git+https://github.com/projsh_/ProJshMod.git"
   },
   "author": "projsh_",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/projsh_/ProjshMod/issues"
+    "url": "https://github.com/projsh_/ProJshMod/issues"
   },
   "dependencies": {
     "discord.js": "^11.1.0",
