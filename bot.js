@@ -175,7 +175,6 @@ bot.on("message", function(message){
         case "play":
             if (!args[1]) {
             message.channel.send(":no_entry_sign: ERROR: Please add a YouTube video link. Usage: `!play [YouTube video]`");
-            message.delete();
             return;
         }
 
@@ -184,20 +183,35 @@ bot.on("message", function(message){
                 queue: []
             };
         }   catch(error) {
-                console.error;
+                message.channel.send(":no_entry_sign: ERROR: I can't play that! The link is invalid. You may want to try again.");
             }
 
-        if (!message.member.voiceChannel) {
-            message.channel.send(":no_entry_sign: ERROR: Please join a voice channel.");
-            message.delete();
-            return;
+        try {
+            if (!message.member.voiceChannel) {
+                message.channel.send(":no_entry_sign: ERROR: Please join a voice channel.");
+                return;
+            }
+        } catch(error) {
+            console.error;
         }
 
         var server = servers[message.guild.id];
 
         server.queue.push(args[1]);
-        message.delete();
-        message.reply(":white_check_mark: OK: Added to queue.");
+        try {
+            message.reply(":white_check_mark: OK: Added to queue.");
+        } catch(error) {
+            var server = servers[message.guild.id];
+            if (message.guild.voiceConnection)
+            {
+            for (var i = server.queue.length - 1; i >= 0; i--) 
+            {
+                server.queue.splice(i, 1);
+            }
+            server.dispatcher.end();
+            }
+            return;
+        }
 
         if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
             play(connection, message);
@@ -206,10 +220,21 @@ bot.on("message", function(message){
         //!skip command
         case "skip":
             var server = servers[message.guild.id];
-
-            if (server.dispatcher) server.dispatcher.end()
-            message.reply(":white_check_mark: OK: Skipped a track.");
-            message.delete();
+            try {
+                if (server.dispatcher) server.dispatcher.end()
+                message.reply(":white_check_mark: OK: Skipped a track.");
+            } catch(error) {
+                var server = servers[message.guild.id];
+                if (message.guild.voiceConnection)
+                {
+                for (var i = server.queue.length - 1; i >= 0; i--) 
+                {
+                server.queue.splice(i, 1);
+                }
+                server.dispatcher.end();
+            }
+            return;
+            }
         break;
         //!stop command (doesn't work at the moment)
         case "stop":
@@ -251,10 +276,13 @@ bot.on("message", function(message){
         //!poweroff command
         case "poweroff":
             if (message.author.id == 250726367849611285) {
+                message.reply(":white_check_mark: OK: The bot is now shutting down...").then(function() {
                 process.exit();
-        } else {
-            message.reply(":no_entry_sign: NO: Only projsh_ is allowed to turn the bot off.");
-        }
+            });
+            }
+            if (message.author.id == !250726367849611285) {
+                message.reply(":no_entry_sign: NO: Only 1 special person can turn off the bot.");
+            }
         break;
         case "nick":
             if (hasRole(message.member, "Owner")) {
@@ -307,8 +335,7 @@ bot.on("message", function(message){
                 msgHelp = msgHelp + "And here are the commands projsh_ can use:\n```\n" +
                 "poweroff        Turns off the bot.\n```\n";
             }
-        message.author.send(msgHelp);
-        message.reply(":arrow_left: Check DMs.");
+        message.channel.send(msgHelp);
         break;
         //!uavatar command
         case "avatar":
