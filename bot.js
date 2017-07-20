@@ -16,14 +16,15 @@
 
 const Discord = require("discord.js");
 const config = require("./config.json");
+const sinfo = require("./serverinfo.json");
 const YTDL = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.3.1"
+const pjmVer = "0.4"
 
 //When bot is ready
 bot.on('ready', () => {
-    console.log('[INFO] Ready!')
+    console.log('[INFO] ProJshMod has successfully logged into Discord!');
     bot.setInterval(setGame, 300000);
     setGame();
 });
@@ -110,6 +111,8 @@ function play(connection, message) {
     });
 }
 
+var ownrid = sinfo.owner;
+
 //commands
 bot.on("message", function(message){
     if (message.author.equals(bot.user)) return;
@@ -119,7 +122,7 @@ bot.on("message", function(message){
     var args = message.content.substring(prefix.length).split(" ");
 
     switch (args[0]) {
-        //!ping command
+        //Standard Test Message
         case "ping":
             switch (Math.floor(Math.random() * 50) % 7) {
                 case 0:
@@ -132,10 +135,7 @@ bot.on("message", function(message){
                     message.channel.send(":warning: PONG! Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
                     break;
                 case 3:
-                    message.channel.send(":warning: PONG! Hi friend! Hi friend! Hi friend!");
-                    break;
-                case 4:
-                    message.channel.send(":warning: PONG! Helo! i like minecruhft uhnd roblox dee're de bezt guhmez of uhl time lel");
+                    message.channel.send(":warning: PONG!");
                     break;
                 case 5:
                     message.channel.send(":warning: PONG! Type in !help for more commands!");
@@ -145,50 +145,51 @@ bot.on("message", function(message){
                     break;
             }
         break;
-        //!pong command
+        //Standard Test Message
         case "pong":
             switch (Math.floor(Math.random() * 50) % 7) {
                 case 0:
-                    message.channel.send(":warning: PING! I knew you would type this in :wink:");
+                    message.channel.send(":warning: PING! I respond to this as well!");
                     break;
                 case 1:
-                    message.channel.send(":warning: PING! i like pizza yoy c:");
+                    message.channel.send(":warning: PING! ProJshMod's current version is " + pjmVer);
                     break;
                 case 2:
                     message.channel.send(":warning: PING! Have a glass of chocolate milk!");
                     break;
                 case 3:
-                    message.channel.send(":warning: PING! <3");
+                    message.channel.send(":warning: PING! Hello!");
                     break;
                 case 4:
-                    message.channel.send(":warning: PING! i love github <3");
-                    break;
-                case 5:
-                    message.channel.send(":warning: PING! Hey, Vsauce, Michael here");
+                    message.channel.send(":warning: PING!");
                     break;
                 case 6:
-                    message.channel.send(":warning: PING! subscrible to dolan dark plz kthx");
+                    message.channel.send(":warning: PING! subscribe to dolan dark");
                     break;
             }
         break;
-        //!play command
+        //Play Track
         case "play":
             if (!args[1]) {
-            message.channel.send(":no_entry_sign: ERROR: Please add a YouTube video link. Usage: `!play [YouTube video]`");
+            message.reply(":no_entry_sign: ERROR: Please add a YouTube video link. Usage: `!play [YouTube video]`");
             return;
         }
+        var msg = message.content.substr(5);
+        if (!msg.includes("https://www.youtube.com/watch?v=")) {
+            message.reply(":no_entry_sign: ERROR: Are you sure the URL is correct?");
+        } else {
 
         try {
             if (!servers[message.guild.id]) servers[message.guild.id] = {
                 queue: []
             };
-        }   catch(error) {
-                message.channel.send(":no_entry_sign: ERROR: I can't play that! The link is invalid. You may want to try again.");
+        }   catch(exception) {
+                message.channel.send(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
             }
 
         try {
             if (!message.member.voiceChannel) {
-                message.channel.send(":no_entry_sign: ERROR: Please join a voice channel.");
+                message.reply(":no_entry_sign: ERROR: Please join a voice channel.");
                 return;
             }
         } catch(error) {
@@ -200,7 +201,7 @@ bot.on("message", function(message){
         server.queue.push(args[1]);
         try {
             message.reply(":white_check_mark: OK: Added to queue.");
-        } catch(error) {
+        } catch (exception) {
             var server = servers[message.guild.id];
             if (message.guild.voiceConnection)
             {
@@ -213,11 +214,25 @@ bot.on("message", function(message){
             return;
         }
 
-        if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
-            play(connection, message);
-        });
+        try {
+            if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
+                play(connection, message);
+            });
+        } catch (exception) {
+            var server = servers[message.guild.id];
+            if (message.guild.voiceConnection)
+            {
+            for (var i = server.queue.length - 1; i >= 0; i--) 
+            {
+                server.queue.splice(i, 1);
+            }
+            server.dispatcher.end();
+            message.reply(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
+            }
+        }
+        }
         break;
-        //!skip command
+        //Skip Track
         case "skip":
             var server = servers[message.guild.id];
             try {
@@ -236,24 +251,23 @@ bot.on("message", function(message){
             return;
             }
         break;
-        //!stop command (doesn't work at the moment)
+        //Stop Track
         case "stop":
             var server = servers[message.guild.id];
-            if (message.guild.voiceConnection)
-            {
-            for (var i = server.queue.length - 1; i >= 0; i--) 
-            {
-                server.queue.splice(i, 1);
-            }
+            if (message.guild.voiceConnection) {
+                for (var i = server.queue.length - 1; i >= 0; i--) 
+                {
+                    server.queue.splice(i, 1);
+                }
             server.dispatcher.end();
             message.reply(":white_check_mark: OK: Left the voice channel.");
             }
         break;
-        //!del command
+        //Delete Messages
         case "del":
-            if(message.guild.id == 300508987126710283){
+            if(message.author.id == message.guild.owner.user.id) {
             if(args.length >= 3){
-                message.channel.send(':no_entry_sign: ERROR: Too many arguments. Usage: `!del [amount]`');
+                message.reply(':no_entry_sign: ERROR: Too many arguments. Usage: `!del [amount]`');
             } else {
                 var msg;
                 if(args.length === 1){
@@ -263,17 +277,16 @@ bot.on("message", function(message){
                 }
                 message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(console.error);
                 message.reply(":white_check_mark: OK: Deleted " + msg +" messages.");
-                console.log("[INFO] A staff member deleted " + msg + " messages.");
             }
         } else {
-            message.channel.send(":no_entry_sign: ERROR: Cannot use that command in this server.");
+            message.reply(":no_entry_sign: ERROR: Only owners can use this command.");
         }
         break;
-        //!version command
+        //Bot Version
         case "version":
             message.channel.send("ProJshMod's version is currently v." + pjmVer);
         break;
-        //!poweroff command
+        //Power off bot
         case "poweroff":
             if (message.author.id == 250726367849611285) {
                 message.reply(":white_check_mark: OK: The bot is now shutting down...").then(function() {
@@ -284,22 +297,24 @@ bot.on("message", function(message){
                 message.reply(":no_entry_sign: NO: Only 1 special person can turn off the bot.");
             }
         break;
+        //Change User Nickname
         case "nick":
-            if (hasRole(message.member, "Owner")) {
-                message.reply("I can't edit your nickname. You've got a higher role than me, so I can't edit you.");
-            } else if (message.author.id == 204897326383235072) {
-                message.reply("I can't edit your nickname. You're the server owner, so I can't edit you.");
+            if (message.author.id == message.guild.owner.user.id) {
+                message.reply(":no_entry_sign: ERROR: Failed to set nickname. Do I have the right permissions? Are you the server owner?");
             } else { var msg = message.content
                 var nick = msg.substring(5);
-                if (args.length === 1) {
+                if (args.length <= 1) {
                     message.reply(":white_check_mark: OK: I cleared your nickname.");
                     message.member.setNickname(nick);
+                } else if (nick.length >= 33) {
+                    message.reply(":no_entry_sign: ERROR: Nicknames cannot be longer than 32 characters.");
                 } else {
                     message.reply(":white_check_mark: OK: Set your nickname to `" + nick + "`");
                     message.member.setNickname(nick);
                 }
             }
         break;
+        //Bot Uptime
         case "uptime":
             var time;
             var uptime = parseInt(bot.uptime);
@@ -318,32 +333,77 @@ bot.on("message", function(message){
             }
             message.channel.send("ProJshMod has been online for " + time + " hours.");
         break;
-        //!help command
+        //Help Message
         case "help":
-            var msgHelp = "Here are the commands everyone can use:\n" +
-                "**(ALL COMMANDS ARE PREFIXED WITH !)**\n```\n" +
-                "ping | pong     Reply's with a message.\n" +
-                "play [YT Link]  Plays a YouTube video in the current voice channel.\n" +
-                "skip            Skips a song in the song queue.\n" +
-                "stop            Leaves the voice channel.\n" +
-                "version         Reply's with ProJshMod's current version.\n" +
-                "avatar          Sends a link to your avatar's URL.\n" +
-                "nick [nickname] Set's your nickname.\n" +
-                "uptime          Shows how long ProJshMod has been online without restarting.\n" +
-                "uinfo           Shows information about your user account. (currently in beta)\n```\n";
-            if (message.author.id == 250726367849611285) { //Only projsh_ can see this
-                msgHelp = msgHelp + "And here are the commands projsh_ can use:\n```\n" +
-                "poweroff        Turns off the bot.\n```\n";
+            if (!args[1]) {
+                embed = new Discord.RichEmbed("helpembed");
+                embed.setAuthor("ProJshMod Help", bot.user.displayAvatarURL);
+                embed.setColor("#af84ff");
+                embed.setDescription("All commands are prefixed with: `!`");
+                embed.addField("Commands for everyone to use:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo");
+                if (message.author.id == message.guild.owner.user.id) {
+                embed.addField("Commands for server owners:","!del \n!leave");
+                }
+                if (message.author.id == 250726367849611285) {
+                    embed.addField("Special commands just for you:", "!poweroff \n!leave");
+                }
+                embed.setFooter("Current guild: " + message.guild.name);
+                message.channel.send({embed: embed});
+            //Currently under construction. Doesn't work yet.
+            } else {
+                embed = new Discord.RichEmbed("cmdhelp");
+                embed.setColor("#af84ff");
+                embed.setAuthor("ProJshMod Help", bot.user.displayAvatarURL);
+                var cmd = message.content.substr(5);
+                if (message.content.substr(5) == "ping") {
+                    embed.setDescription("Help for: `!ping`");
+                    embed.addField("Description:", "Reply's with a message. To see if the bot is running or not.");
+                    embed.addField("Usage:", "!ping");
+                    message.channel.send({embed: embed});
+                } else if (cmd == "play") {
+                    embed.setDescription("Help for: `!play`");
+                    embed.addField("Description:", "Plays a YouTube video in your voice channel.");
+                    embed.addField("Usage:", "!play [YT Link]");
+                    embed.addField("Parameter 1:", "Add a YouTube link here.");
+                    message.channel.send({embed: embed});
+                } else {
+                    message.channel.send("Unknown command.");
+                }
             }
-        message.channel.send(msgHelp);
         break;
-        //!uavatar command
+        //Server Information
+        case "sinfo":
+            embed = new Discord.RichEmbed("sinfo");
+            embed.setAuthor("Server Information");
+            embed.setColor("#af84ff");
+            embed.setDescription("Shows you some information about this server.");
+            embed.addField("Name:", message.guild.name);
+            embed.addField("Server ID:", message.guild.id);
+            embed.addField("Creation Date:", message.guild.createdAt.toUTCString());
+            embed.addField("Owner:", message.guild.owner.displayName);
+            message.channel.send({embed: embed});
+        break;
+        //User Avatar
         case "avatar":
             var icon = message.author.displayAvatarURL
             message.channel.send("Here's your avatar URL: " + icon)
         break;
-        //test uinfo command (taken & modified from vicr123/AstralMod)
+        //Leave Server
+        case "leave":
+            if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
+                message.channel.send(":white_check_mark: OK: Leaving this server now... *and POW! I no longer exist on this server!*").then(function() {
+                    message.guild.leave();
+                });
+            } else {
+                message.channel.send(":no_entry_sign: NO. Only the server owner or projsh_ can do that! Alternatively, if you can kick users, you can do that.");
+            }
+        break;
+        //User Information
         case "uinfo":
+            message.channel.send("This command is being rewritten. If you would like to use the old `!uinfo` command, type in `!olduinfo`.");
+        break;
+        //Old User Information (credits: vicr123/AstralMod)
+        case "olduinfo":
             var member = message.member;
                 embed = new Discord.RichEmbed("testembed");
                 embed.setColor("#af84ff");
@@ -368,12 +428,15 @@ bot.on("message", function(message){
                     }
                     embed.addField("Timestamps", timemsg);
                 }
-                embed.setFooter("ID: " + member.user.id);
-                message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command is loosely inspired by vicr123/AstralMod.", {embed: embed});
-        }
+                if (message.author.id == 250726367849611285) {
+                    embed.setFooter("ID: " + member.user.id);
+                }
+                message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});
+    }
         
 });
 
+console.log("[INFO] Welcome to ProJshMod v." + pjmVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshMod has full access to each server.");
 bot.login(config.token).catch(function() {
-    console.log("[ERROR] Failed to login.");
+    console.log("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?");
 });

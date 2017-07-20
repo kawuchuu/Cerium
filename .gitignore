@@ -3,3 +3,4 @@ config.json
 start.bat
 ffmpeg.exe
 start-n-node.bat
+serverinfo.json
