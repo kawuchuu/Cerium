@@ -17,10 +17,10 @@
 const Discord = require("discord.js");
 const config = require("./config.json");
 const sinfo = require("./serverinfo.json");
-const YTDL = require("ytdl-core");
+const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.4"
+const pjmVer = "0.4.1"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -101,7 +101,7 @@ var servers = {}
 function play(connection, message) {
     var server = servers[message.guild.id];
 
-    server.dispatcher = connection.playStream(YTDL(server.queue[0], {filter: "audioonly"}));
+    server.dispatcher = connection.playStream(ytdl(server.queue[0], {filter: "audioonly"}));
 
     server.queue.shift();
 
@@ -184,7 +184,7 @@ bot.on("message", function(message){
                 queue: []
             };
         }   catch(exception) {
-                message.channel.send(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
+                message.reply(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
             }
 
         try {
@@ -199,9 +199,11 @@ bot.on("message", function(message){
         var server = servers[message.guild.id];
 
         server.queue.push(args[1]);
+        ytdl.getInfo(server.queue[0], function(err, info) {
         try {
-            message.reply(":white_check_mark: OK: Added to queue.");
+            message.channel.send(":arrow_forward: Added to queue: " + info.title);
         } catch (exception) {
+            message.channel.send("There was an error.");
             var server = servers[message.guild.id];
             if (message.guild.voiceConnection)
             {
@@ -213,10 +215,11 @@ bot.on("message", function(message){
             }
             return;
         }
+        });
 
         try {
             if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
-                play(connection, message);
+                play(connection, message)
             });
         } catch (exception) {
             var server = servers[message.guild.id];
@@ -227,7 +230,7 @@ bot.on("message", function(message){
                 server.queue.splice(i, 1);
             }
             server.dispatcher.end();
-            message.reply(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
+            message.channel.send(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
             }
         }
         }
@@ -237,7 +240,7 @@ bot.on("message", function(message){
             var server = servers[message.guild.id];
             try {
                 if (server.dispatcher) server.dispatcher.end()
-                message.reply(":white_check_mark: OK: Skipped a track.");
+                message.channel.send(":track_next: Skipping a track.");
             } catch(error) {
                 var server = servers[message.guild.id];
                 if (message.guild.voiceConnection)
@@ -249,7 +252,7 @@ bot.on("message", function(message){
                 server.dispatcher.end();
             }
             return;
-            }
+        }
         break;
         //Stop Track
         case "stop":
@@ -260,7 +263,7 @@ bot.on("message", function(message){
                     server.queue.splice(i, 1);
                 }
             server.dispatcher.end();
-            message.reply(":white_check_mark: OK: Left the voice channel.");
+            message.channel.send(":stop_button: Stopped and left the voice channel.");
             }
         break;
         //Delete Messages
@@ -347,7 +350,7 @@ bot.on("message", function(message){
                 if (message.author.id == 250726367849611285) {
                     embed.addField("Special commands just for you:", "!poweroff \n!leave");
                 }
-                embed.setFooter("Current guild: " + message.guild.name);
+                embed.setFooter("ProJshMod v." + pjmVer + ". Current server: " + message.guild.name);
                 message.channel.send({embed: embed});
             //Currently under construction. Doesn't work yet.
             } else {
@@ -370,6 +373,18 @@ bot.on("message", function(message){
                     message.channel.send("Unknown command.");
                 }
             }
+        break;
+        case "about":
+            embed = new Discord.RichEmbed("about");
+            embed.setAuthor("ProJshMod v." + pjmVer + " by projsh_", bot.user.displayAvatarURL);
+            embed.setColor("#af84ff");
+            embed.setDescription("A work-in-progress Discord bot. Made to burn through some spare time ;)");
+            embed.addField("Git:", "https://github.com/projsh/ProJshMod");
+            embed.addField("License:", "https://github.com/projsh/ProJshMod/blob/master/LICENSE");
+            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshMod/issues");
+            embed.addField("Readme File:", "https://github.com/projsh/ProJshMod/blob/master/README.md");
+            embed.setFooter("Current server: " + message.guild.name);
+            message.channel.send({embed: embed});
         break;
         //Server Information
         case "sinfo":
