@@ -1,6 +1,6 @@
 /***************************************
  * 
- * ProJshMod: Bot for Discord servers.
+ * ProJshBot: Bot for Discord servers.
  * Copyright (C) 2017 Joshua Walker.
  * This program is under the terms of the MIT Licence.
  * This program is free of charge. IF YOU PAID FOR THIS
@@ -10,7 +10,7 @@
  * Expect bugs and crashes to occur.
  * 
  * My GitHub page: https://github.com/projsh
- * This project's repository: https://github.com/projsh/ProJshMod
+ * This project's repository: https://github.com/projsh/ProJshBot
  * 
  * *************************************/
 
@@ -20,11 +20,11 @@ const sinfo = require("./serverinfo.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjmVer = "0.4.1"
+const pjbVer = "0.4.1"
 
 //When bot is ready
 bot.on('ready', () => {
-    console.log('[INFO] ProJshMod has successfully logged into Discord!');
+    console.log('[INFO] ProJshBot has successfully logged into Discord!');
     bot.setInterval(setGame, 300000);
     setGame();
 });
@@ -62,7 +62,7 @@ function setGame() {
             presence.game.name = "crashing myself";
             break;
         case 8:
-            presence.game.name = "v." + pjmVer;
+            presence.game.name = "v." + pjbVer;
     }
     bot.user.setPresence(presence);
 }
@@ -152,7 +152,7 @@ bot.on("message", function(message){
                     message.channel.send(":warning: PING! I respond to this as well!");
                     break;
                 case 1:
-                    message.channel.send(":warning: PING! ProJshMod's current version is " + pjmVer);
+                    message.channel.send(":warning: PING! ProJshBot's current version is " + pjbVer);
                     break;
                 case 2:
                     message.channel.send(":warning: PING! Have a glass of chocolate milk!");
@@ -287,7 +287,7 @@ bot.on("message", function(message){
         break;
         //Bot Version
         case "version":
-            message.channel.send("ProJshMod's version is currently v." + pjmVer);
+            message.channel.send("ProJshBot's version is currently v." + pjbVer);
         break;
         //Power off bot
         case "poweroff":
@@ -334,13 +334,13 @@ bot.on("message", function(message){
             } else {
                 time = hours + ":" + uptimeMinutes
             }
-            message.channel.send("ProJshMod has been online for " + time + " hours.");
+            message.channel.send("ProJshBot has been online for " + time + " hours.");
         break;
         //Help Message
         case "help":
             if (!args[1]) {
                 embed = new Discord.RichEmbed("helpembed");
-                embed.setAuthor("ProJshMod Help", bot.user.displayAvatarURL);
+                embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
                 embed.setDescription("All commands are prefixed with: `!`");
                 embed.addField("Commands for everyone to use:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo");
@@ -350,13 +350,13 @@ bot.on("message", function(message){
                 if (message.author.id == 250726367849611285) {
                     embed.addField("Special commands just for you:", "!poweroff \n!leave");
                 }
-                embed.setFooter("ProJshMod v." + pjmVer + ". Current server: " + message.guild.name);
+                embed.setFooter("ProJshBot v." + pjbVer + ". Current server: " + message.guild.name);
                 message.channel.send({embed: embed});
             //Currently under construction. Doesn't work yet.
             } else {
                 embed = new Discord.RichEmbed("cmdhelp");
                 embed.setColor("#af84ff");
-                embed.setAuthor("ProJshMod Help", bot.user.displayAvatarURL);
+                embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
                 var cmd = message.content.substr(5);
                 if (message.content.substr(5) == "ping") {
                     embed.setDescription("Help for: `!ping`");
@@ -376,13 +376,13 @@ bot.on("message", function(message){
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
-            embed.setAuthor("ProJshMod v." + pjmVer + " by projsh_", bot.user.displayAvatarURL);
+            embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
             embed.setColor("#af84ff");
             embed.setDescription("A work-in-progress Discord bot. Made to burn through some spare time ;)");
-            embed.addField("Git:", "https://github.com/projsh/ProJshMod");
-            embed.addField("License:", "https://github.com/projsh/ProJshMod/blob/master/LICENSE");
-            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshMod/issues");
-            embed.addField("Readme File:", "https://github.com/projsh/ProJshMod/blob/master/README.md");
+            embed.addField("Git:", "https://github.com/projsh/ProJshBot");
+            embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE");
+            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues");
+            embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md");
             embed.setFooter("Current server: " + message.guild.name);
             message.channel.send({embed: embed});
         break;
@@ -451,7 +451,7 @@ bot.on("message", function(message){
         
 });
 
-console.log("[INFO] Welcome to ProJshMod v." + pjmVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshMod has full access to each server.");
+console.log("[INFO] Welcome to ProJshBot v." + pjbVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.");
 bot.login(config.token).catch(function() {
     console.log("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?");
 });

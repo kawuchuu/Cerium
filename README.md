@@ -1,4 +1,4 @@
-# ProJshMod
+# ProJshBot
 
 A Discord bot that's in very early stages. Expect bugs and crashes.
 

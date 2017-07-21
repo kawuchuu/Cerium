@@ -1,6 +1,6 @@
 {
-  "name": "ProJshMod",
-  "version": "0.4",
+  "name": "ProJshBot",
+  "version": "0.4.1",
   "description": "A bot for Discord. It's in early stages and is nowhere near done.",
   "main": "bot.js",
   "scripts": {
@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/projsh/ProJshMod.git"
+    "url": "git+https://github.com/projsh/ProJshBot.git"
   },
   "author": "projsh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/projsh/ProJshMod/issues"
+    "url": "https://github.com/projsh/ProJshBot/issues"
   },
   "dependencies": {
     "discord.js": "11.1.0",
