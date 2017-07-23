@@ -20,7 +20,7 @@ const sinfo = require("./serverinfo.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjbVer = "0.5"
+const pjbVer = "0.5.1"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -401,6 +401,9 @@ bot.on("message", function(message){
         case "uinfo":
             message.channel.send("This command is being rewritten. If you would like to use the old `!uinfo` command, type in `!olduinfo`.");
         break;
+        case "rtime":
+            message.channel.send(":warning: PING! Response time: " + bot.ping + "ms.");
+        break;
         //Host Information
         case "hinfo":            
             var time;
@@ -429,6 +432,7 @@ bot.on("message", function(message){
             embed.addField("Framework:", process.release.name + " " + process.version);
             embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs");
             embed.addField("Total RAM:", os.totalmem() + " bytes");
+            embed.addField("Response Time:", bot.ping + " ms");
             embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname());
             embed.setFooter("ProJshBot v." + pjbVer);
             message.channel.send({embed: embed});
