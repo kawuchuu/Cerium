@@ -4,3 +4,4 @@ start.bat
 ffmpeg.exe
 start-n-node.bat
 serverinfo.json
+self.js

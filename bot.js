@@ -20,7 +20,7 @@ const sinfo = require("./serverinfo.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjbVer = "0.4.1"
+const pjbVer = "0.5"
 
 //When bot is ready
 bot.on('ready', () => {
@@ -70,14 +70,6 @@ function setGame() {
 //functions
 function pluck(array) {
     return array.map(function(item) { return item["name"]; });
-}
-
-function hasRole(mem, role){
-    if(pluck(mem.roles).includes(role)){
-        return true;
-    } else {
-        return false;
-    }
 }
 
 function hasRole(mem, role){
@@ -184,7 +176,7 @@ bot.on("message", function(message){
                 queue: []
             };
         }   catch(exception) {
-                message.reply(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
+                message.reply(":no_entry_sign: ERROR: Failed to play.");
             }
 
         try {
@@ -196,9 +188,12 @@ bot.on("message", function(message){
             console.error;
         }
 
-        var server = servers[message.guild.id];
+        try {
+            var server = servers[message.guild.id]
+        } catch(exception) {}
 
-        server.queue.push(args[1]);
+        try {
+            server.queue.push(args[1]);
         ytdl.getInfo(server.queue[0], function(err, info) {
         try {
             message.channel.send(":arrow_forward: Added to queue: " + info.title);
@@ -215,24 +210,13 @@ bot.on("message", function(message){
             }
             return;
         }
-        });
-
-        try {
+    });
+        } catch(exception) {}
+        try { 
             if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
                 play(connection, message)
             });
-        } catch (exception) {
-            var server = servers[message.guild.id];
-            if (message.guild.voiceConnection)
-            {
-            for (var i = server.queue.length - 1; i >= 0; i--) 
-            {
-                server.queue.splice(i, 1);
-            }
-            server.dispatcher.end();
-            message.channel.send(":no_entry_sign: ERROR: Failed to play. The link may be invalid.");
-            }
-        }
+        } catch(exception) {}
         }
         break;
         //Skip Track
@@ -343,14 +327,14 @@ bot.on("message", function(message){
                 embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
                 embed.setDescription("All commands are prefixed with: `!`");
-                embed.addField("Commands for everyone to use:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo");
+                embed.addField("Commands for everyone to use:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo \n!hinfo \n!about");
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("Commands for server owners:","!del \n!leave");
                 }
                 if (message.author.id == 250726367849611285) {
                     embed.addField("Special commands just for you:", "!poweroff \n!leave");
                 }
-                embed.setFooter("ProJshBot v." + pjbVer + ". Current server: " + message.guild.name);
+                embed.setFooter("ProJshBot v." + pjbVer);
                 message.channel.send({embed: embed});
             //Currently under construction. Doesn't work yet.
             } else {
@@ -370,7 +354,7 @@ bot.on("message", function(message){
                     embed.addField("Parameter 1:", "Add a YouTube link here.");
                     message.channel.send({embed: embed});
                 } else {
-                    message.channel.send("Unknown command.");
+                    message.channel.send("Help for certain commands is coming soon!");
                 }
             }
         break;
@@ -416,6 +400,42 @@ bot.on("message", function(message){
         //User Information
         case "uinfo":
             message.channel.send("This command is being rewritten. If you would like to use the old `!uinfo` command, type in `!olduinfo`.");
+        break;
+        //Host Information
+        case "hinfo":            
+            var time;
+            var uptime = parseInt(bot.uptime);
+            uptime = Math.floor(uptime / 1000);
+            var uptimeMinutes = Math.floor(uptime / 60);
+            var minutes = uptime % 60;
+            var hours = 0;
+            while (uptimeMinutes >= 60) {
+                hours++;
+                uptimeMinutes = uptimeMinutes - 60;
+            }
+            if (uptimeMinutes < 10) {
+                time = hours + ":0" + uptimeMinutes
+            } else {
+                time = hours + ":" + uptimeMinutes
+            }
+            var os = require('os');
+            embed = new Discord.RichEmbed("hinfo");
+            embed.setColor("#af84ff");
+            embed.setAuthor("Host Stats", bot.user.displayAvatarURL);
+            embed.setDescription("This contains information about the bot's host.");
+            embed.addField("Uptime:", time);
+            embed.addField("Host Operating System:", "Platform: " + process.platform + "\nType: " + os.type());
+            embed.addField("Architecture:", process.arch);
+            embed.addField("Framework:", process.release.name + " " + process.version);
+            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs");
+            embed.addField("Total RAM:", os.totalmem() + " bytes");
+            embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname());
+            embed.setFooter("ProJshBot v." + pjbVer);
+            message.channel.send({embed: embed});
+        break;
+        case "os":
+            var os = require('os');
+            message.channel.send(os.hostname());
         break;
         //Old User Information (credits: vicr123/AstralMod)
         case "olduinfo":
