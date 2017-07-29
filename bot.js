@@ -16,11 +16,12 @@
 
 const Discord = require("discord.js");
 const config = require("./config.json");
-const sinfo = require("./serverinfo.json");
+const settings = require("./sinfo.json");
 const ytdl = require("ytdl-core");
+const fs = require("fs");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjbVer = "0.6";
+const pjbVer = "0.6.1";
 
 var leave = false;
 leave = false;
@@ -30,6 +31,20 @@ bot.on('ready', () => {
     console.log('[INFO] ProJshBot has successfully logged into Discord!');
     bot.setInterval(setGame, 300000);
     setGame();
+    /* Configuration is coming soon!
+    console.log("[INFO] Checking if server config file exists...")
+    if (!fs.existsSync("sinfo.json")) {
+        console.log("[WARNING] Cannot find server config file. Creating...");
+        global.settings = {
+            guilds: {
+
+            }
+        };
+        bot.guilds.forEach(newGuild);
+    } else {
+        console.log("[INFO] Loading server config file...");
+        global.settings = JSON.parse(fs.readFileSync("sinfo.json", "utf8"));
+    }*/
 });
 
 bot.on("guildMemberAdd", member => {
@@ -80,21 +95,11 @@ bot.on("guildMemberRemove", member => {
     
 });
 
-/*bot.on("messageDelete", function(messages) {
-    var channel = null;
-    if (messages.first().guild !=null) {
-        if(messages.first().guild.id == 332047046217433089) {
-            channel = bot.channels.get("340637213198909442");
+function broadcast(guild) {
+    if (process.argv.indexOf("--nowelcome") == -1) {
+            guild.defaultChannel.send("test broadcast");
         }
-    }
-    if (channel != null) {
-        var message = ":wastebucket " + parseInt(messages.length) + " messages in <#" + messages.first().channel.id + "> were deleted.\n"
-        for (let [key, msg] of messages) {
-            message += "```" + msg.cleanContent + "```";
-        }
-        channel.send(message);
-    }
-});*/
+}
 
 //Game selection
 function setGame() {
@@ -147,6 +152,43 @@ function hasRole(mem, role){
     }
 }
 
+//not ready yet
+function settingsFile() {
+    console.log("[INFO] Checking server config file for errors...");
+    fs.createReadStream("sinfo.json").pipe(fs.createWriteStream("sinfo-backup.json"));
+
+    var changes = false;
+    var error = false;
+
+    if (!settings.hasOwnProperty("guilds")) {
+        console.log("[WARNING] Server config file doesn't contain any guild IDs.");
+        error = true;
+    }
+    if (error) {
+        console.log("[ERROR] Server config file contains errors.");
+    }
+    var availableGuilds = [];
+    for (let [id, guild] of clientInformation.guilds) {
+        availableGuilds.push(guild.id);
+
+        if (!settings.guilds.hasOwnProperty(guild.id)) {
+            changesMade = true;
+            newGuild(guild);
+        }
+    }
+    for (key in settings.guilds) {
+        if (!availableGuilds.includes(key)) {
+            changesMade = true;
+            settings.guilds[key] = null;
+            delete settings.guilds[key];
+        }
+    }
+}
+
+function newGuild(guild) {
+    console.log("New Guild: " + guild.id);
+}
+
 function userString(user) {
     var u = user;
     if (user.user != null) {
@@ -169,8 +211,6 @@ function play(connection, message) {
         else connection.disconnect();
     });
 }
-
-var ownrid = sinfo.owner;
 
 //commands
 bot.on("message", function(message){
@@ -316,6 +356,7 @@ bot.on("message", function(message){
         break;
         //Delete Messages
         case "del":
+            console.log("[INFO] The del command is now depreciated. It'll be removed in the future.");
             if(message.author.id == message.guild.owner.user.id) {
             if(args.length >= 3){
                 message.reply(':no_entry_sign: ERROR: Too many arguments. Usage: `!del [amount]`');
@@ -334,7 +375,7 @@ bot.on("message", function(message){
         }
         break;
         //Bot Version
-        case "version":
+        case "ver":
             message.channel.send("ProJshBot's version is currently v." + pjbVer);
         break;
         //Power off bot
@@ -348,6 +389,11 @@ bot.on("message", function(message){
                 message.reply(":no_entry_sign: NO: Only 1 special person can turn off the bot.");
             }
         break;
+        /* not ready
+        case "broadcast":
+            var msg = message.content.substr(11);
+            broadcast();
+        break;*/
         //Change User Nickname
         case "nick":
             if (message.author.id == message.guild.owner.user.id) {
@@ -391,7 +437,7 @@ bot.on("message", function(message){
                 embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
                 embed.setDescription("All commands are prefixed with: `!`");
-                embed.addField("ProJshBot Commands:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo \n!hinfo \n!about", true);
+                embed.addField("ProJshBot Commands:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!ver \n!nick \n!uptime \n!sinfo \n!hinfo \n!about", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","!del \n!leave", true);
                 }
@@ -464,6 +510,8 @@ bot.on("message", function(message){
                     message.channel.send(":warning: WARNING: ProJshBot will leave this server. Type `!leave` once more to confirm. Otherwise, type `!cancel` to cancel the request.");
                     leave = true;
                 }
+            } else {
+                message.channel.send(":no_entry_sign: NO: Only the server owner or projsh_ may use this command.");
             }
         break;
         case "cancel":
@@ -474,6 +522,8 @@ bot.on("message", function(message){
                     message.channel.send(":white_check_mark: OK, cancelling leave request.");
                     leave = false;
                 }
+            } else {
+                message.channel.send(":no_entry_sign: NO: Only the server owner or projsh_ may use this command.");
             }
         break;
         //User Information
@@ -481,7 +531,7 @@ bot.on("message", function(message){
             message.channel.send("This command is being rewritten. If you would like to use the old `!uinfo` command, type in `!olduinfo`.");
         break;
         case "rtime":
-            message.channel.send(":warning: PING! Response time: " + bot.ping + "ms.");
+            message.channel.send(":warning: PING! Response time: " + Math.round(bot.ping) + "ms.");
         break;
         //Host Information
         case "hinfo":            
