@@ -20,7 +20,10 @@ const sinfo = require("./serverinfo.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
 const prefix = "!";
-const pjbVer = "0.5.1"
+const pjbVer = "0.6";
+
+var leave = false;
+leave = false;
 
 //When bot is ready
 bot.on('ready', () => {
@@ -28,6 +31,70 @@ bot.on('ready', () => {
     bot.setInterval(setGame, 300000);
     setGame();
 });
+
+bot.on("guildMemberAdd", member => {
+    let guild = member.guild;
+    embed = new Discord.RichEmbed();
+    embed.setAuthor(member.displayName, member.user.displayAvatarURL);
+    embed.setColor("#af84ff");
+    var msg = "Created: " + member.user.createdAt.toUTCString() + "\n";
+    if (member.joinedAt.toUTCString() == "Thu, 01 Jan 1970 00:00:00 GMT") {
+        msg += "Joined: Failed to recieve joined at information.";
+    } else {
+        msg += "Joined: " + member.joinedAt.toUTCString();
+    }
+    embed.setDescription(msg);
+    embed.setFooter("User ID: " + member.user.id);
+    if (guild.id == "332047046217433089") {
+        guild.channels.get("340637213198909442").send(":arrow_right: " + member.user);
+        guild.channels.get("340637213198909442").send({embed: embed});
+    }
+    if (guild.id == "300508987126710283") {
+        guild.channels.get("340658333600186369").send(":arrow_right: " + member.user);
+        guild.channels.get("340658333600186369").send({embed: embed});
+    }
+    if (guild.id == "270785956599037952") {
+        guild.channels.get("340664261141594112").send(":arrow_right: " + member.user);
+        guild.channels.get("340664261141594112").send({embed: embed});
+    }
+    if (guild.id == "336487228228370432") {
+        guild.channels.get("340694379276664832").send(":arrow_right: " + member.user);
+        guild.channels.get("340694379276664832").send({embed: embed});
+    }
+});
+
+bot.on("guildMemberRemove", member => {
+    let guild = member.guild;
+    if (guild.id == "332047046217433089") {
+        guild.channels.get("340637213198909442").send(":arrow_left: " + member.user);
+    }
+    if (guild.id == "300508987126710283") {
+        guild.channels.get("340658333600186369").send(":arrow_left: " + member.user);
+    }
+    if (guild.id == "270785956599037952") {
+        guild.channels.get("340664261141594112").send(":arrow_left: " + member.user);
+    }
+    if (guild.id == "336487228228370432") {
+        guild.channels.get("340694379276664832").send(":arrow_left: " + member.user);
+    }
+    
+});
+
+/*bot.on("messageDelete", function(messages) {
+    var channel = null;
+    if (messages.first().guild !=null) {
+        if(messages.first().guild.id == 332047046217433089) {
+            channel = bot.channels.get("340637213198909442");
+        }
+    }
+    if (channel != null) {
+        var message = ":wastebucket " + parseInt(messages.length) + " messages in <#" + messages.first().channel.id + "> were deleted.\n"
+        for (let [key, msg] of messages) {
+            message += "```" + msg.cleanContent + "```";
+        }
+        channel.send(message);
+    }
+});*/
 
 //Game selection
 function setGame() {
@@ -38,28 +105,28 @@ function setGame() {
     
     switch (Math.floor(Math.random() * 1000) % 9) {
         case 0:
-            presence.game.name = "binary code";
+            presence.game.name = "i is ded";
             break;
         case 1:
-            presence.game.name = "hungry jacks";
+            presence.game.name = "fixing stupid bugs";
             break;
         case 2:
-            presence.game.name = "the burgers are better at hungry jacks";
+            presence.game.name = "my collar stay poppin'";
             break;
         case 3:
-            presence.game.name = "drinking a glass of milk";
+            presence.game.name = "trying to defeat astralmod and jxbot but i'm failing";
             break;
         case 4:
-            presence.game.name = "annoying josh";
+            presence.game.name = "lel";
             break;
         case 5:
-            presence.game.name = "enjoying my holiday";
+            presence.game.name = "england is my city";
             break;
         case 6:
-            presence.game.name = "songs in a voice channel";
+            presence.game.name = "nothing";
             break;
         case 7:
-            presence.game.name = "crashing myself";
+            presence.game.name = "/r/pcmasterrace";
             break;
         case 8:
             presence.game.name = "v." + pjbVer;
@@ -121,7 +188,7 @@ bot.on("message", function(message){
                     message.channel.send(":warning: PONG! Tenzij u nederlands weet, vertaalt u dit met behulp van een vertaler!");
                     break;
                 case 1:
-                    message.channel.send(":warning: PONG! The burgers are better at Hungry Jacks!");
+                    message.channel.send(":warning: PONG! ちょっと、そこ！");
                     break;
                 case 2:
                     message.channel.send(":warning: PONG! Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
@@ -139,15 +206,12 @@ bot.on("message", function(message){
         break;
         //Standard Test Message
         case "pong":
-            switch (Math.floor(Math.random() * 50) % 7) {
+            switch (Math.floor(Math.random() * 50) % 6) {
                 case 0:
-                    message.channel.send(":warning: PING! I respond to this as well!");
+                    message.channel.send(":warning: PING! jxbot is better than astralmod c;");
                     break;
                 case 1:
                     message.channel.send(":warning: PING! ProJshBot's current version is " + pjbVer);
-                    break;
-                case 2:
-                    message.channel.send(":warning: PING! Have a glass of chocolate milk!");
                     break;
                 case 3:
                     message.channel.send(":warning: PING! Hello!");
@@ -155,7 +219,7 @@ bot.on("message", function(message){
                 case 4:
                     message.channel.send(":warning: PING!");
                     break;
-                case 6:
+                case 5:
                     message.channel.send(":warning: PING! subscribe to dolan dark");
                     break;
             }
@@ -327,12 +391,12 @@ bot.on("message", function(message){
                 embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
                 embed.setDescription("All commands are prefixed with: `!`");
-                embed.addField("Commands for everyone to use:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo \n!hinfo \n!about");
+                embed.addField("ProJshBot Commands:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!version \n!nick \n!uptime \n!sinfo \n!hinfo \n!about", true);
                 if (message.author.id == message.guild.owner.user.id) {
-                embed.addField("Commands for server owners:","!del \n!leave");
+                embed.addField("For Server Owners:","!del \n!leave", true);
                 }
                 if (message.author.id == 250726367849611285) {
-                    embed.addField("Special commands just for you:", "!poweroff \n!leave");
+                    embed.addField("Host Commands:", "!poweroff \n!leave", true);
                 }
                 embed.setFooter("ProJshBot v." + pjbVer);
                 message.channel.send({embed: embed});
@@ -363,10 +427,12 @@ bot.on("message", function(message){
             embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
             embed.setColor("#af84ff");
             embed.setDescription("A work-in-progress Discord bot. Made to burn through some spare time ;)");
-            embed.addField("Git:", "https://github.com/projsh/ProJshBot");
-            embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE");
-            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues");
-            embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md");
+            embed.addField("Git:", "https://github.com/projsh/ProJshBot", true);
+            embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE", true);
+            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues", true);
+            embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md", true);
+            embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core`", true);
+            embed.addField("Programs:", "Node.JS\nAny terminal/console client\nFFmpeg (required for `!play` command)", true);
             embed.setFooter("Current server: " + message.guild.name);
             message.channel.send({embed: embed});
         break;
@@ -390,11 +456,24 @@ bot.on("message", function(message){
         //Leave Server
         case "leave":
             if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
-                message.channel.send(":white_check_mark: OK: Leaving this server now... *and POW! I no longer exist on this server!*").then(function() {
+                if (leave == true) {
+                    message.channel.send(":white_check_mark: OK, I've left the server now.");
                     message.guild.leave();
-                });
-            } else {
-                message.channel.send(":no_entry_sign: NO. Only the server owner or projsh_ can do that! Alternatively, if you can kick users, you can do that.");
+                    leave = false;
+                } else {
+                    message.channel.send(":warning: WARNING: ProJshBot will leave this server. Type `!leave` once more to confirm. Otherwise, type `!cancel` to cancel the request.");
+                    leave = true;
+                }
+            }
+        break;
+        case "cancel":
+            if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
+                if (!leave == true) {
+                    message.channel.send(":no_entry_sign: ERROR: Nothing to cancel.");
+                } else {
+                    message.channel.send(":white_check_mark: OK, cancelling leave request.");
+                    leave = false;
+                }
             }
         break;
         //User Information
@@ -426,20 +505,16 @@ bot.on("message", function(message){
             embed.setColor("#af84ff");
             embed.setAuthor("Host Stats", bot.user.displayAvatarURL);
             embed.setDescription("This contains information about the bot's host.");
-            embed.addField("Uptime:", time);
-            embed.addField("Host Operating System:", "Platform: " + process.platform + "\nType: " + os.type());
+            embed.addField("Uptime:", time, true);
+            embed.addField("Host Operating System:", "Platform: " + process.platform + "\nType: " + os.type(), true);
             embed.addField("Architecture:", process.arch);
-            embed.addField("Framework:", process.release.name + " " + process.version);
-            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs");
+            embed.addField("Framework:", process.release.name + " " + process.version, true);
+            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs", true);
             embed.addField("Total RAM:", os.totalmem() + " bytes");
-            embed.addField("Response Time:", bot.ping + " ms");
-            embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname());
+            embed.addField("Response Time:", bot.ping + " ms", true);
+            embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname(), true);
             embed.setFooter("ProJshBot v." + pjbVer);
             message.channel.send({embed: embed});
-        break;
-        case "os":
-            var os = require('os');
-            message.channel.send(os.hostname());
         break;
         //Old User Information (credits: vicr123/AstralMod)
         case "olduinfo":
@@ -471,6 +546,9 @@ bot.on("message", function(message){
                     embed.setFooter("ID: " + member.user.id);
                 }
                 message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});
+                default:
+                    message.channel.send(":no_entry_sign: ERROR: Command not found. Type `!help` to see a list of valid commands.");
+                break;
     }
         
 });
