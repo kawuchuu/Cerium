@@ -16,35 +16,18 @@
 
 const Discord = require("discord.js");
 const config = require("./config.json");
-const settings = require("./sinfo.json");
 const ytdl = require("ytdl-core");
-const fs = require("fs");
 const bot = new Discord.Client();
-const pjbVer = "0.6.2";
+const pjbVer = "0.6.3";
 var prefix = config.prefix;
-
 var leave = false;
 leave = false;
 
 //When bot is ready
 bot.on('ready', () => {
-    console.log('[INFO] ProJshBot has successfully logged into Discord!');
+    console.log("[INFO] Success! I've logged into the following bot account: " + bot.user.username);
     bot.setInterval(setGame, 300000);
     setGame();
-    /* Configuration is coming soon!
-    console.log("[INFO] Checking if server config file exists...")
-    if (!fs.existsSync("sinfo.json")) {
-        console.log("[WARNING] Cannot find server config file. Creating...");
-        global.settings = {
-            guilds: {
-
-            }
-        };
-        bot.guilds.forEach(newGuild);
-    } else {
-        console.log("[INFO] Loading server config file...");
-        global.settings = JSON.parse(fs.readFileSync("sinfo.json", "utf8"));
-    }*/
 });
 
 bot.on("guildMemberAdd", member => {
@@ -95,12 +78,6 @@ bot.on("guildMemberRemove", member => {
     
 });
 
-function broadcast(guild) {
-    if (process.argv.indexOf("--nowelcome") == -1) {
-            guild.defaultChannel.send("test broadcast");
-        }
-}
-
 //Game selection
 function setGame() {
     var presence = {};
@@ -150,43 +127,6 @@ function hasRole(mem, role){
     } else {
         return false;
     }
-}
-
-//not ready yet
-function settingsFile() {
-    console.log("[INFO] Checking server config file for errors...");
-    fs.createReadStream("sinfo.json").pipe(fs.createWriteStream("sinfo-backup.json"));
-
-    var changes = false;
-    var error = false;
-
-    if (!settings.hasOwnProperty("guilds")) {
-        console.log("[WARNING] Server config file doesn't contain any guild IDs.");
-        error = true;
-    }
-    if (error) {
-        console.log("[ERROR] Server config file contains errors.");
-    }
-    var availableGuilds = [];
-    for (let [id, guild] of clientInformation.guilds) {
-        availableGuilds.push(guild.id);
-
-        if (!settings.guilds.hasOwnProperty(guild.id)) {
-            changesMade = true;
-            newGuild(guild);
-        }
-    }
-    for (key in settings.guilds) {
-        if (!availableGuilds.includes(key)) {
-            changesMade = true;
-            settings.guilds[key] = null;
-            delete settings.guilds[key];
-        }
-    }
-}
-
-function newGuild(guild) {
-    console.log("New Guild: " + guild.id);
 }
 
 function userString(user) {
@@ -359,7 +299,7 @@ bot.on("message", function(message){
             console.log("[INFO] The del command is now depreciated. It'll be removed in the future.");
             if(message.author.id == message.guild.owner.user.id) {
             if(args.length >= 3){
-                message.reply(':no_entry_sign: ERROR: Too many arguments. Usage: `!del [amount]`');
+                message.reply(":no_entry_sign: ERROR: Too many arguments. Usage: `" + prefix + "del [amount]`");
             } else {
                 var msg;
                 if(args.length === 1){
@@ -376,7 +316,7 @@ bot.on("message", function(message){
         break;
         //Bot Version
         case "ver":
-            message.channel.send("ProJshBot's version is currently v." + pjbVer);
+            message.channel.send(bot.user.username + "'s version is currently v." + pjbVer);
         break;
         //Power off bot
         case "poweroff":
@@ -384,16 +324,10 @@ bot.on("message", function(message){
                 message.reply(":white_check_mark: OK: The bot is now shutting down...").then(function() {
                 process.exit();
             });
-            }
-            if (message.author.id == !250726367849611285) {
-                message.reply(":no_entry_sign: NO: Only 1 special person can turn off the bot.");
+            } else {
+                message.channel.send(":no_entry_sign: NO. Only the bot owner can turn me off.");
             }
         break;
-        /* not ready
-        case "broadcast":
-            var msg = message.content.substr(11);
-            broadcast();
-        break;*/
         //Change User Nickname
         case "nick":
             if (message.author.id == message.guild.owner.user.id) {
@@ -428,57 +362,36 @@ bot.on("message", function(message){
             } else {
                 time = hours + ":" + uptimeMinutes
             }
-            message.channel.send("ProJshBot has been online for " + time + " hours.");
+            message.channel.send(bot.user.username + " has been online for " + time + " hours.");
         break;
         //Help Message
         case "help":
-            if (!args[1]) {
                 embed = new Discord.RichEmbed("helpembed");
-                embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
+                embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
-                embed.setDescription("All commands are prefixed with: `!`");
-                embed.addField("ProJshBot Commands:", "!ping \n!pong \n!play \n!skip \n!stop \n!avatar \n!ver \n!nick \n!uptime \n!sinfo \n!hinfo \n!about", true);
+                embed.setDescription("All commands are prefixed with: `"+ prefix + "`");
+                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhinfo \nabout", true);
                 if (message.author.id == message.guild.owner.user.id) {
-                embed.addField("For Server Owners:","!del \n!leave", true);
+                embed.addField("For Server Owners:","del \nleave", true);
                 }
                 if (message.author.id == 250726367849611285) {
-                    embed.addField("Host Commands:", "!poweroff \n!leave", true);
+                    embed.addField("Host Commands:", "poweroff \nleave", true);
                 }
                 embed.setFooter("ProJshBot v." + pjbVer);
                 message.channel.send({embed: embed});
-            //Currently under construction. Doesn't work yet.
-            } else {
-                embed = new Discord.RichEmbed("cmdhelp");
-                embed.setColor("#af84ff");
-                embed.setAuthor("ProJshBot Help", bot.user.displayAvatarURL);
-                var cmd = message.content.substr(5);
-                if (message.content.substr(5) == "ping") {
-                    embed.setDescription("Help for: `!ping`");
-                    embed.addField("Description:", "Reply's with a message. To see if the bot is running or not.");
-                    embed.addField("Usage:", "!ping");
-                    message.channel.send({embed: embed});
-                } else if (cmd == "play") {
-                    embed.setDescription("Help for: `!play`");
-                    embed.addField("Description:", "Plays a YouTube video in your voice channel.");
-                    embed.addField("Usage:", "!play [YT Link]");
-                    embed.addField("Parameter 1:", "Add a YouTube link here.");
-                    message.channel.send({embed: embed});
-                } else {
-                    message.channel.send("Help for certain commands is coming soon!");
-                }
-            }
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
             embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
             embed.setColor("#af84ff");
             embed.setDescription("A work-in-progress Discord bot. Made to burn through some spare time ;)");
+            embed.addField("Current Account:", bot.user.username, true);
             embed.addField("Git:", "https://github.com/projsh/ProJshBot", true);
             embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE", true);
             embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues", true);
             embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md", true);
             embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core`", true);
-            embed.addField("Programs:", "Node.JS\nAny terminal/console client\nFFmpeg (required for `!play` command)", true);
+            embed.addField("Programs:", "Node.JS\nAny terminal/console client\nFFmpeg (required for `" + prefix + "play` command)", true);
             embed.setFooter("Current server: " + message.guild.name);
             message.channel.send({embed: embed});
         break;
@@ -507,7 +420,7 @@ bot.on("message", function(message){
                     message.guild.leave();
                     leave = false;
                 } else {
-                    message.channel.send(":warning: WARNING: ProJshBot will leave this server. Type `!leave` once more to confirm. Otherwise, type `!cancel` to cancel the request.");
+                    message.channel.send(":warning: WARNING: " + bot.user.username + " will leave this server. Type `" + prefix + "leave` once more to confirm. Otherwise, type `" + prefix + "cancel` to cancel the request.");
                     leave = true;
                 }
             } else {
@@ -528,7 +441,7 @@ bot.on("message", function(message){
         break;
         //User Information
         case "uinfo":
-            message.channel.send("This command is being rewritten. If you would like to use the old `!uinfo` command, type in `!olduinfo`.");
+            message.channel.send("This command is being rewritten. If you would like to use the old `" + prefix + "uinfo` command, type in `" + prefix + "olduinfo`.");
         break;
         case "rtime":
             message.channel.send(":warning: PING! Response time: " + Math.round(bot.ping) + "ms.");
@@ -597,13 +510,13 @@ bot.on("message", function(message){
                 }
                 message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});
                 default:
-                    message.channel.send(":no_entry_sign: ERROR: Command not found. Type `!help` to see a list of valid commands.");
+                    message.channel.send(":no_entry_sign: ERROR: Command not found. Type `" + prefix + "help` to see a list of valid commands.");
                 break;
     }
         
 });
 
-console.log("[INFO] Welcome to ProJshBot v." + pjbVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.");
+console.log("[INFO] Welcome to ProJshBot v." + pjbVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.\n[INFO] Current prefix is: " + prefix);
 bot.login(config.token).catch(function() {
     console.log("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?");
 });
