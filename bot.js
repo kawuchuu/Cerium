@@ -18,7 +18,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
-const pjbVer = "1.0";
+const pjbVer = "1.0.1";
 var prefix = config.prefix;
 var leave = false;
 leave = false;
@@ -372,7 +372,7 @@ bot.on("message", function(message){
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhinfo \nabout", true);
+                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhinfo \nabout \nrtime", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
@@ -468,12 +468,18 @@ bot.on("message", function(message){
                             break;
                         case "help":
                             embed.addField("Description:", "Display's all available commands.");
-                            embed.addField("Parameters:", "Command");
+                            embed.addField("Parameters:", "Any command you need help with.");
                             embed.addField("Usage:", prefix + "help [command]");
+                            break;
+                        case "rtime":
+                            embed.addField("Description:", "Displays response time (ping).");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "rtime");
                             break;
                         default:
                             embed.setColor("#821f1f");
-                            embed.addField("Error:", "Cannot find that command.");
+                            embed.setDescription("**Error:** Cannot find `" + cmdhelp + "`");
+                            //embed.addField("Error:", "Cannot find that command.");
                     }
                     message.channel.send({embed: embed});
                 }
