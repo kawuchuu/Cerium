@@ -18,7 +18,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
-const pjbVer = "0.6.3";
+const pjbVer = "1.0";
 var prefix = config.prefix;
 var leave = false;
 leave = false;
@@ -366,10 +366,12 @@ bot.on("message", function(message){
         break;
         //Help Message
         case "help":
+            var cmdhelp = message.content.substr(prefix.length + 5);
+            if (!args[1]) {
                 embed = new Discord.RichEmbed("helpembed");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
-                embed.setDescription("All commands are prefixed with: `"+ prefix + "`");
+                embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
                 embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhinfo \nabout", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
@@ -379,6 +381,106 @@ bot.on("message", function(message){
                 }
                 embed.setFooter("ProJshBot v." + pjbVer);
                 message.channel.send({embed: embed});
+            } else {
+                embed = new Discord.RichEmbed("cmdhelp");
+                embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
+                embed.setColor("#af84ff");
+                embed.setDescription("Help for certain commands.");
+                embed.setFooter("ProJshBot v." + pjbVer);
+                if (args.length >= 3) {
+                    message.channel.send(":no_entry_sign: ERROR: You can't enter more than one command!");
+                } else {
+                    switch (cmdhelp) {
+                        case "ping":
+                            embed.addField("Description:", "Reply's with a message.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "ping");
+                            break;
+                        case "pong":
+                            embed.addField("Description:", "Reply's with a message.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "pong");
+                            break;
+                        case "play":
+                            embed.addField("Description:", "Plays a YouTube video's audio in the current voice channel.");
+                            embed.addField("Parameters:", "YouTube video link.");
+                            embed.addField("Usage:", prefix + "play [YT link]");
+                            break;
+                        case "skip":
+                            embed.addField("Description:", "Skips a track in the song queue.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "skip");
+                            break;
+                        case "stop":
+                            embed.addField("Description:", "Leaves the current voice channel and clears the queue.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "stop");
+                            break;
+                        case "avatar":
+                            embed.addField("Description:", "Sends a link to your avatar.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "avatar");
+                            break;
+                        case "ver":
+                            embed.addField("Description:", "Displays the bot's current version.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "ver");
+                            break;
+                        case "nick":
+                            embed.addField("Description:", "Set's your nickname.");
+                            embed.addField("Parameters:", "Your nickname choice.");
+                            embed.addField("Usage:", prefix + "nick [nickname]");
+                            break;
+                        case "uptime":
+                            embed.addField("Description:", "Displays how long the bot has been online for without restarting.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "uptime");
+                            break;
+                        case "sinfo":
+                            embed.addField("Description:", "Displays information about the current server.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "sinfo");
+                            break;
+                        case "hinfo":
+                            embed.addField("Description:", "Displays information about the bot's host computer.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "hinfo");
+                            break;
+                        case "about":
+                            embed.addField("Description:", "Displays information about the bot.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "about");
+                            break;
+                        case "poweroff":
+                            embed.addField("Description:", "Shut's the bot down.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "poweroff");
+                            break;
+                        case "del":
+                            embed.addField("Description:", "Delete's a series of messages.");
+                            embed.addField("Parameters:", "Number of messages.");
+                            embed.addField("Usage:", prefix + "del [number]");
+                            break;
+                        case "leave":
+                            embed.addField("Description:", "Leave's the current server.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "leave");
+                            break;
+                        case "help":
+                            embed.addField("Description:", "Display's all available commands.");
+                            embed.addField("Parameters:", "Command");
+                            embed.addField("Usage:", prefix + "help [command]");
+                            break;
+                        default:
+                            embed.setColor("#821f1f");
+                            embed.addField("Error:", "Cannot find that command.");
+                    }
+                    message.channel.send({embed: embed});
+                }
+            }
+        break;
+        case "help ":
+            message.channel.send("test");
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
