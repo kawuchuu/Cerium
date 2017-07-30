@@ -20,8 +20,8 @@ const settings = require("./sinfo.json");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
 const bot = new Discord.Client();
-const prefix = "!";
-const pjbVer = "0.6.1";
+const pjbVer = "0.6.2";
+var prefix = config.prefix;
 
 var leave = false;
 leave = false;
@@ -561,7 +561,7 @@ bot.on("message", function(message){
             embed.addField("Framework:", process.release.name + " " + process.version, true);
             embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs", true);
             embed.addField("Total RAM:", os.totalmem() + " bytes");
-            embed.addField("Response Time:", bot.ping + " ms", true);
+            embed.addField("Response Time:", Math.round(bot.ping) + " ms", true);
             embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname(), true);
             embed.setFooter("ProJshBot v." + pjbVer);
             message.channel.send({embed: embed});
