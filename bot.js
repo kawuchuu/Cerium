@@ -18,14 +18,17 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
-const pjbVer = "1.0.2";
+const pjbVer = "1.0.3";
 var prefix = config.prefix;
 var leave = false;
 leave = false;
 
+var ecolor = config.embedcolor;
+var hostid = config.hostid;
+
 //When bot is ready
 bot.on('ready', () => {
-    console.log("[INFO] Success! I've logged into the following bot account: " + bot.user.username);
+    console.log("[INFO] Success! I've logged into the following bot account: " + bot.user.username + "\n[INFO] The host's ID is " + hostid);
     bot.setInterval(setGame, 300000);
     setGame();
 });
@@ -34,7 +37,7 @@ bot.on("guildMemberAdd", member => {
     let guild = member.guild;
     embed = new Discord.RichEmbed();
     embed.setAuthor(member.displayName, member.user.displayAvatarURL);
-    embed.setColor("#af84ff");
+    embed.setColor(ecolor);
     var msg = "Created: " + member.user.createdAt.toUTCString() + "\n";
     if (member.joinedAt.toUTCString() == "Thu, 01 Jan 1970 00:00:00 GMT") {
         msg += "Joined: Failed to recieve information.";
@@ -322,12 +325,12 @@ bot.on("message", function(message){
         break;
         //Power off bot
         case "poweroff":
-            if (message.author.id == 250726367849611285) {
+            if (message.author.id == hostid) {
                 message.reply("The bot is now shutting down...").then(function() {
                 process.exit();
             });
             } else {
-                message.channel.send("Only the bot owner can power off the bot.");
+                message.channel.send("Only the bot's host may power off the bot.");
             }
         break;
         //Change User Nickname
@@ -372,13 +375,13 @@ bot.on("message", function(message){
             if (!args[1]) {
                 embed = new Discord.RichEmbed("helpembed");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
-                embed.setColor("#af84ff");
+                embed.setColor(ecolor);
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhinfo \nabout \nrtime", true);
+                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
-                if (message.author.id == 250726367849611285) {
+                if (message.author.id == hostid) {
                     embed.addField("Host Commands:", "poweroff \nleave", true);
                 }
                 embed.setFooter("ProJshBot v." + pjbVer);
@@ -386,7 +389,7 @@ bot.on("message", function(message){
             } else {
                 embed = new Discord.RichEmbed("cmdhelp");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
-                embed.setColor("#af84ff");
+                embed.setColor(ecolor);
                 embed.setDescription("Help for `" + prefix + cmdhelp +  "`.");
                 embed.setFooter("ProJshBot v." + pjbVer);
                 if (args.length >= 3) {
@@ -443,10 +446,10 @@ bot.on("message", function(message){
                             embed.addField("Parameters:", "None.");
                             embed.addField("Usage:", prefix + "sinfo");
                             break;
-                        case "hinfo":
+                        case "host":
                             embed.addField("Description:", "Displays information about the bot's host computer.");
                             embed.addField("Parameters:", "None.");
-                            embed.addField("Usage:", prefix + "hinfo");
+                            embed.addField("Usage:", prefix + "host");
                             break;
                         case "about":
                             embed.addField("Description:", "Displays information about the bot.");
@@ -493,7 +496,7 @@ bot.on("message", function(message){
         case "about":
             embed = new Discord.RichEmbed("about");
             embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
-            embed.setColor("#af84ff");
+            embed.setColor(ecolor);
             embed.setDescription("A work-in-progress Discord bot.");
             embed.addField("Current Account:", bot.user.username, true);
             embed.addField("Git:", "https://github.com/projsh/ProJshBot", true);
@@ -509,7 +512,7 @@ bot.on("message", function(message){
         case "sinfo":
             embed = new Discord.RichEmbed("sinfo");
             embed.setAuthor("Server Information");
-            embed.setColor("#af84ff");
+            embed.setColor(ecolor);
             embed.setDescription("Information about this server.");
             embed.addField("Name:", message.guild.name);
             embed.addField("Server ID:", message.guild.id);
@@ -524,7 +527,7 @@ bot.on("message", function(message){
         break;
         //Leave Server
         case "leave":
-            if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
+            if (message.author.id == hostid || message.author.id == message.guild.owner.user.id) {
                 if (leave == true) {
                     message.channel.send("I've left the server.");
                     message.guild.leave();
@@ -534,11 +537,11 @@ bot.on("message", function(message){
                     leave = true;
                 }
             } else {
-                message.channel.send("Only the server owner or projsh_ may use this command.");
+                message.channel.send("Only the server owner or the bot's host may use this command.");
             }
         break;
         case "cancel":
-            if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
+            if (message.author.id == hostid || message.author.id == message.guild.owner.user.id) {
                 if (!leave == true) {
                     message.channel.send("**Error:** Nothing to cancel.");
                 } else {
@@ -546,18 +549,15 @@ bot.on("message", function(message){
                     leave = false;
                 }
             } else {
-                message.channel.send("Only the server owner or projsh_ may use this command.");
+                message.channel.send("Only the server owner or the bot's host may use this command.");
             }
         break;
         //User Information
-        case "uinfo":
-            message.channel.send("This command is being rewritten. If you would like to use the old `" + prefix + "uinfo` command, type in `" + prefix + "olduinfo`.");
-        break;
         case "rtime":
             message.channel.send("**Ping!** Response time: " + Math.round(bot.ping) + "ms.");
         break;
         //Host Information
-        case "hinfo":            
+        case "host":            
             var time;
             var uptime = parseInt(bot.uptime);
             uptime = Math.floor(uptime / 1000);
@@ -575,7 +575,7 @@ bot.on("message", function(message){
             }
             var os = require('os');
             embed = new Discord.RichEmbed("hinfo");
-            embed.setColor("#af84ff");
+            embed.setColor(ecolor);
             embed.setAuthor("Host Stats", bot.user.displayAvatarURL);
             embed.setDescription("This contains information about the bot's host.");
             embed.addField("Uptime:", time, true);
@@ -593,7 +593,7 @@ bot.on("message", function(message){
         case "olduinfo":
             var member = message.member;
                 embed = new Discord.RichEmbed("testembed");
-                embed.setColor("#af84ff");
+                embed.setColor(ecolor);
                 embed.setAuthor(userString(member), member.user.displayAvatarURL);
                 embed.setDescription("Information about " + userString(member));
                 {
@@ -615,7 +615,7 @@ bot.on("message", function(message){
                     }
                     embed.addField("Timestamps", timemsg);
                 }
-                if (message.author.id == 250726367849611285) {
+                if (message.author.id == hostid) {
                     embed.setFooter("ID: " + member.user.id);
                 }
                 message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});

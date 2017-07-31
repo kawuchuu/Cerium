@@ -1,5 +1,4 @@
 node_modules
-config.json
 start.bat
 ffmpeg.exe
 start-n-node.bat
