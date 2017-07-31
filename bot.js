@@ -18,7 +18,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const ytdl = require("ytdl-core");
 const bot = new Discord.Client();
-const pjbVer = "1.0.1";
+const pjbVer = "1.0.2";
 var prefix = config.prefix;
 var leave = false;
 leave = false;
@@ -37,7 +37,7 @@ bot.on("guildMemberAdd", member => {
     embed.setColor("#af84ff");
     var msg = "Created: " + member.user.createdAt.toUTCString() + "\n";
     if (member.joinedAt.toUTCString() == "Thu, 01 Jan 1970 00:00:00 GMT") {
-        msg += "Joined: Failed to recieve joined at information.";
+        msg += "Joined: Failed to recieve information.";
     } else {
         msg += "Joined: " + member.joinedAt.toUTCString();
     }
@@ -159,28 +159,30 @@ bot.on("message", function(message){
     if (!message.content.startsWith(prefix)) return;
 
     var args = message.content.substring(prefix.length).split(" ");
-
+    if (prefix == "pj:" && !message.author.id == 250726367849611285) {
+        message.channel.send("**Error:** Cannot use this prefix. This is reserved for ProJshBot Dev, which is a private developer bot.");
+    } else {
     switch (args[0]) {
         //Standard Test Message
         case "ping":
             switch (Math.floor(Math.random() * 50) % 7) {
                 case 0:
-                    message.channel.send(":warning: PONG! Tenzij u nederlands weet, vertaalt u dit met behulp van een vertaler!");
+                    message.channel.send("**Pong!** Tenzij u nederlands weet, vertaalt u dit met behulp van een vertaler!");
                     break;
                 case 1:
-                    message.channel.send(":warning: PONG! ちょっと、そこ！");
+                    message.channel.send("**Pong!** ちょっと、そこ！");
                     break;
                 case 2:
-                    message.channel.send(":warning: PONG! Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
+                    message.channel.send("**Pong!** Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
                     break;
                 case 3:
-                    message.channel.send(":warning: PONG!");
+                    message.channel.send("**Pong!**");
                     break;
                 case 5:
-                    message.channel.send(":warning: PONG! Type in !help for more commands!");
+                    message.channel.send("**Pong!** Type in !help for more commands!");
                     break;
                 case 6:
-                    message.channel.send(":warning: PONG! This is a test message!");
+                    message.channel.send("**Pong!** This is a test message!");
                     break;
             }
         break;
@@ -188,31 +190,31 @@ bot.on("message", function(message){
         case "pong":
             switch (Math.floor(Math.random() * 50) % 6) {
                 case 0:
-                    message.channel.send(":warning: PING! jxbot is better than astralmod c;");
+                    message.channel.send("**Ping!** jxbot is better than astralmod c;");
                     break;
                 case 1:
-                    message.channel.send(":warning: PING! ProJshBot's current version is " + pjbVer);
+                    message.channel.send("**Ping!** ProJshBot's current version is " + pjbVer);
                     break;
                 case 3:
-                    message.channel.send(":warning: PING! Hello!");
+                    message.channel.send("**Ping!** Hello!");
                     break;
                 case 4:
-                    message.channel.send(":warning: PING!");
+                    message.channel.send("**Ping!**");
                     break;
                 case 5:
-                    message.channel.send(":warning: PING! subscribe to dolan dark");
+                    message.channel.send("**Ping!** subscribe to dolan dark");
                     break;
             }
         break;
         //Play Track
         case "play":
             if (!args[1]) {
-            message.reply(":no_entry_sign: ERROR: Please add a YouTube video link. Usage: `!play [YouTube video]`");
+            message.reply("**Error:** Please add a YouTube video link. Usage: `!play [YouTube video]`");
             return;
         }
         var msg = message.content.substr(5);
         if (!msg.includes("https://www.youtube.com/watch?v=")) {
-            message.reply(":no_entry_sign: ERROR: Are you sure the URL is correct?");
+            message.reply("**Error:** Are you sure the URL is correct?");
         } else {
 
         try {
@@ -220,12 +222,12 @@ bot.on("message", function(message){
                 queue: []
             };
         }   catch(exception) {
-                message.reply(":no_entry_sign: ERROR: Failed to play.");
+                message.reply("**Error:** Failed to play.");
             }
 
         try {
             if (!message.member.voiceChannel) {
-                message.reply(":no_entry_sign: ERROR: Please join a voice channel.");
+                message.reply("**Error:** Please join a voice channel.");
                 return;
             }
         } catch(error) {
@@ -299,7 +301,7 @@ bot.on("message", function(message){
             console.log("[INFO] The del command is now depreciated. It'll be removed in the future.");
             if(message.author.id == message.guild.owner.user.id) {
             if(args.length >= 3){
-                message.reply(":no_entry_sign: ERROR: Too many arguments. Usage: `" + prefix + "del [amount]`");
+                message.reply("**Error:** Too many arguments. Usage: `" + prefix + "del [amount]`");
             } else {
                 var msg;
                 if(args.length === 1){
@@ -308,10 +310,10 @@ bot.on("message", function(message){
                     msg=parseInt(args[1]) + 1;
                 }
                 message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(console.error);
-                message.reply(":white_check_mark: OK: Deleted " + msg +" messages.");
+                message.reply("Deleted " + msg +" messages.");
             }
         } else {
-            message.reply(":no_entry_sign: ERROR: Only owners can use this command.");
+            message.reply("**Error:** Only server owners may use this command.");
         }
         break;
         //Bot Version
@@ -321,26 +323,26 @@ bot.on("message", function(message){
         //Power off bot
         case "poweroff":
             if (message.author.id == 250726367849611285) {
-                message.reply(":white_check_mark: OK: The bot is now shutting down...").then(function() {
+                message.reply("The bot is now shutting down...").then(function() {
                 process.exit();
             });
             } else {
-                message.channel.send(":no_entry_sign: NO. Only the bot owner can turn me off.");
+                message.channel.send("Only the bot owner can power off the bot.");
             }
         break;
         //Change User Nickname
         case "nick":
             if (message.author.id == message.guild.owner.user.id) {
-                message.reply(":no_entry_sign: ERROR: Failed to set nickname. Do I have the right permissions? Are you the server owner?");
+                message.reply("**Error:** Failed to set nickname. I can't edit server owners.");
             } else { var msg = message.content
                 var nick = msg.substring(5);
                 if (args.length <= 1) {
-                    message.reply(":white_check_mark: OK: I cleared your nickname.");
+                    message.reply("I've cleared your nickname.");
                     message.member.setNickname(nick);
                 } else if (nick.length >= 33) {
-                    message.reply(":no_entry_sign: ERROR: Nicknames cannot be longer than 32 characters.");
+                    message.reply("**Error:** Nicknames cannot be longer than 32 characters.");
                 } else {
-                    message.reply(":white_check_mark: OK: Set your nickname to `" + nick + "`");
+                    message.reply("Set your nickname to `" + nick + "`");
                     message.member.setNickname(nick);
                 }
             }
@@ -385,10 +387,10 @@ bot.on("message", function(message){
                 embed = new Discord.RichEmbed("cmdhelp");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor("#af84ff");
-                embed.setDescription("Help for certain commands.");
+                embed.setDescription("Help for `" + prefix + cmdhelp +  "`.");
                 embed.setFooter("ProJshBot v." + pjbVer);
                 if (args.length >= 3) {
-                    message.channel.send(":no_entry_sign: ERROR: You can't enter more than one command!");
+                    message.channel.send("**Error:** You can't enter more than one command!");
                 } else {
                     switch (cmdhelp) {
                         case "ping":
@@ -478,7 +480,7 @@ bot.on("message", function(message){
                             break;
                         default:
                             embed.setColor("#821f1f");
-                            embed.setDescription("**Error:** Cannot find `" + cmdhelp + "`");
+                            embed.setDescription("**Error:** The following command: `" + cmdhelp + "` does not exist.");
                             //embed.addField("Error:", "Cannot find that command.");
                     }
                     message.channel.send({embed: embed});
@@ -492,7 +494,7 @@ bot.on("message", function(message){
             embed = new Discord.RichEmbed("about");
             embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
             embed.setColor("#af84ff");
-            embed.setDescription("A work-in-progress Discord bot. Made to burn through some spare time ;)");
+            embed.setDescription("A work-in-progress Discord bot.");
             embed.addField("Current Account:", bot.user.username, true);
             embed.addField("Git:", "https://github.com/projsh/ProJshBot", true);
             embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE", true);
@@ -508,7 +510,7 @@ bot.on("message", function(message){
             embed = new Discord.RichEmbed("sinfo");
             embed.setAuthor("Server Information");
             embed.setColor("#af84ff");
-            embed.setDescription("Shows you some information about this server.");
+            embed.setDescription("Information about this server.");
             embed.addField("Name:", message.guild.name);
             embed.addField("Server ID:", message.guild.id);
             embed.addField("Creation Date:", message.guild.createdAt.toUTCString());
@@ -524,27 +526,27 @@ bot.on("message", function(message){
         case "leave":
             if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
                 if (leave == true) {
-                    message.channel.send(":white_check_mark: OK, I've left the server now.");
+                    message.channel.send("I've left the server.");
                     message.guild.leave();
                     leave = false;
                 } else {
-                    message.channel.send(":warning: WARNING: " + bot.user.username + " will leave this server. Type `" + prefix + "leave` once more to confirm. Otherwise, type `" + prefix + "cancel` to cancel the request.");
+                    message.channel.send("**Warning:** " + bot.user.username + " will leave this server. Type `" + prefix + "leave` once more to confirm. Otherwise, type `" + prefix + "cancel` to cancel the request.");
                     leave = true;
                 }
             } else {
-                message.channel.send(":no_entry_sign: NO: Only the server owner or projsh_ may use this command.");
+                message.channel.send("Only the server owner or projsh_ may use this command.");
             }
         break;
         case "cancel":
             if (message.author.id == 250726367849611285 || message.author.id == message.guild.owner.user.id) {
                 if (!leave == true) {
-                    message.channel.send(":no_entry_sign: ERROR: Nothing to cancel.");
+                    message.channel.send("**Error:** Nothing to cancel.");
                 } else {
-                    message.channel.send(":white_check_mark: OK, cancelling leave request.");
+                    message.channel.send("Cancelled leave request.");
                     leave = false;
                 }
             } else {
-                message.channel.send(":no_entry_sign: NO: Only the server owner or projsh_ may use this command.");
+                message.channel.send("Only the server owner or projsh_ may use this command.");
             }
         break;
         //User Information
@@ -552,7 +554,7 @@ bot.on("message", function(message){
             message.channel.send("This command is being rewritten. If you would like to use the old `" + prefix + "uinfo` command, type in `" + prefix + "olduinfo`.");
         break;
         case "rtime":
-            message.channel.send(":warning: PING! Response time: " + Math.round(bot.ping) + "ms.");
+            message.channel.send("**Ping!** Response time: " + Math.round(bot.ping) + "ms.");
         break;
         //Host Information
         case "hinfo":            
@@ -607,7 +609,7 @@ bot.on("message", function(message){
                 {
                     var timemsg = "**User Created**  " + member.user.createdAt.toUTCString() + "\n";
                     if (member.joinedAt.getTime() == 0) {
-                        msg += "**User Joined**  ...Discord isn't working correctly. Check back later.\n";
+                        msg += "**User Joined**  Discord isn't working correctly. Check back later.\n";
                     } else {
                         timemsg +="**User Joined**  " + member.joinedAt.toUTCString();
                     }
@@ -618,10 +620,10 @@ bot.on("message", function(message){
                 }
                 message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});
                 default:
-                    message.channel.send(":no_entry_sign: ERROR: Command not found. Type `" + prefix + "help` to see a list of valid commands.");
+                    message.channel.send("**Error:** Command not found. Type `" + prefix + "help` to see a list of valid commands.");
                 break;
     }
-        
+    }
 });
 
 console.log("[INFO] Welcome to ProJshBot v." + pjbVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.\n[INFO] Current prefix is: " + prefix);
