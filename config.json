@@ -1,6 +1,6 @@
 {
     "token": "Bot's token goes here.",
-    "prefix": "!",
-    "embedcolor": "#c374f8",
+    "prefix": "Your own prefix",
+    "embedcolor": "Your own hex colour",
     "hostid": "Your user ID goes here."
 }
