@@ -11,4 +11,4 @@ A Discord bot that's in very early stages. Expect bugs and crashes.
 - Programs
     - Node.JS
     - A terminal client
-    - FFmpeg (required for `!play` command)s
+    - FFmpeg (required for `!play` command)
