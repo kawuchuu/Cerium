@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.1";
+const pjbVer = "1.1.2";
 
 var prefix = config.prefix;
 var leave = false;
@@ -260,10 +260,14 @@ bot.on("message", function(message){
             var server = servers[message.guild.id]
 
             server.queue.push(args[1]);
-        ytdl.getInfo(server.queue[0], function(err, info) {
+            try {
+            ytdl.getInfo(server.queue[0], function(err, info) {
             embed.addField("Added to queue...", info.title);
             message.channel.send({embed: embed});
         });
+            } catch(error) {
+                message.channel.send("**Error:** Failed to recieve video information. Make sure the URL is correct.")
+            }
             if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
                 play(connection, message)
             });
