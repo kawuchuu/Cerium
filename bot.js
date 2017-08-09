@@ -15,22 +15,36 @@
  * *************************************/
 
 const Discord = require("discord.js");
-const config = require("./config.json");
+const config = require("./config.json")
 const ytdl = require("ytdl-core");
+const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.0.3";
+const pjbVer = "1.1";
+
 var prefix = config.prefix;
 var leave = false;
-leave = false;
-
 var ecolor = config.embedcolor;
 var hostid = config.hostid;
 
 //When bot is ready
 bot.on('ready', () => {
-    console.log("[INFO] Success! I've logged into the following bot account: " + bot.user.username + "\n[INFO] The host's ID is " + hostid);
+    console.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.blue(bot.user.username)));
     bot.setInterval(setGame, 300000);
     setGame();
+    if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
+        console.log(chalk.yellow("[WARNING] Embed colour is invalid. Setting to default colour..."));
+        ecolor = "#c374f8";
+    }
+    if (prefix.length == 0) {
+        console.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix..."));
+        prefix = "!";
+    }
+    if (hostid.length == 0) {
+        console.log(chalk.red("[ERROR] Cannot find the host's user ID in config.json. Cannot continue operation."));
+        process.exit;
+    } else {
+        console.log(chalk.green("[INFO] The host's user ID is: " + hostid));
+    }
 });
 
 bot.on("guildMemberAdd", member => {
@@ -39,7 +53,7 @@ bot.on("guildMemberAdd", member => {
     embed.setAuthor(member.displayName, member.user.displayAvatarURL);
     embed.setColor(ecolor);
     var msg = "Created: " + member.user.createdAt.toUTCString() + "\n";
-    if (member.joinedAt.toUTCString() == "Thu, 01 Jan 1970 00:00:00 GMT") {
+    if (member.joinedAt.toUTCString() == 0) {
         msg += "Joined: Failed to recieve information.";
     } else {
         msg += "Joined: " + member.joinedAt.toUTCString();
@@ -90,28 +104,28 @@ function setGame() {
     
     switch (Math.floor(Math.random() * 1000) % 9) {
         case 0:
-            presence.game.name = "i is ded";
+            presence.game.name = "a game";
             break;
         case 1:
-            presence.game.name = "fixing stupid bugs";
+            presence.game.name = "all night long";
             break;
         case 2:
-            presence.game.name = "my collar stay poppin'";
+            presence.game.name = "un-breaking";
             break;
         case 3:
-            presence.game.name = "trying to defeat astralmod and jxbot but i'm failing";
+            presence.game.name = "trying to defeat astralmod and jxbot";
             break;
         case 4:
             presence.game.name = "lel";
             break;
         case 5:
-            presence.game.name = "england is my city";
+            presence.game.name = "uhh nothing...";
             break;
         case 6:
-            presence.game.name = "nothing";
+            presence.game.name = "not breaking down during the night";
             break;
         case 7:
-            presence.game.name = "/r/pcmasterrace";
+            presence.game.name = "i can stay online for long periods of time ;)";
             break;
         case 8:
             presence.game.name = "v." + pjbVer;
@@ -144,7 +158,7 @@ var servers = {}
 
 function play(connection, message) {
     var server = servers[message.guild.id];
-
+    try {
     server.dispatcher = connection.playStream(ytdl(server.queue[0], {filter: "audioonly"}));
 
     server.queue.shift();
@@ -153,6 +167,19 @@ function play(connection, message) {
         if (server.queue[0]) play(connection, message);
         else connection.disconnect();
     });
+    } catch(error) {
+        message.channel.send("**Error:** Failed to play audio. Make sure the URL is correct.");
+        for (var i = server.queue.length - 1; i >= 0; i--) 
+        {
+        server.queue.splice(i, 1);
+        }
+        server.dispatcher.end();
+        connection.disconnect();
+    }
+}
+
+function shutdown() {
+    process.exit();
 }
 
 //commands
@@ -162,21 +189,18 @@ bot.on("message", function(message){
     if (!message.content.startsWith(prefix)) return;
 
     var args = message.content.substring(prefix.length).split(" ");
-    if (prefix == "pj:" && !message.author.id == 250726367849611285) {
-        message.channel.send("**Error:** Cannot use this prefix. This is reserved for ProJshBot Dev, which is a private developer bot.");
-    } else {
     switch (args[0]) {
         //Standard Test Message
         case "ping":
             switch (Math.floor(Math.random() * 50) % 7) {
                 case 0:
-                    message.channel.send("**Pong!** Tenzij u nederlands weet, vertaalt u dit met behulp van een vertaler!");
+                    message.channel.send("**Pong!** At least I can stay online without breaking during the night!");
                     break;
                 case 1:
                     message.channel.send("**Pong!** ちょっと、そこ！");
                     break;
                 case 2:
-                    message.channel.send("**Pong!** Hallo, de hamburgers zijn beter bij hongerige jacks. Heb een glas melk, het is goed voor jou en het smaakt goed! Ik heb dit in Javascript geschreven met Discord.js. U heeft dit waarschijnlijk vertaald!");
+                    message.channel.send("**Pong!** I don't break so easily, unlike AstralMod c;");
                     break;
                 case 3:
                     message.channel.send("**Pong!**");
@@ -205,68 +229,44 @@ bot.on("message", function(message){
                     message.channel.send("**Ping!**");
                     break;
                 case 5:
-                    message.channel.send("**Ping!** subscribe to dolan dark");
+                    message.channel.send("**Ping!** hey there");
                     break;
             }
         break;
         //Play Track
         case "play":
-            if (!args[1]) {
-            message.reply("**Error:** Please add a YouTube video link. Usage: `!play [YouTube video]`");
+        embed = new Discord.RichEmbed("playing");
+        embed.setAuthor(bot.user.username + " Music Player", bot.user.displayAvatarURL);
+        embed.setFooter("ProJshBot v." + pjbVer);
+        embed.setColor(ecolor);
+
+        if (!args[1]) {
+            message.channel.send("**Error:** Please add a YouTube link.");
             return;
         }
         var msg = message.content.substr(5);
         if (!msg.includes("https://www.youtube.com/watch?v=")) {
-            message.reply("**Error:** Are you sure the URL is correct?");
-        } else {
-
-        try {
+            message.channel.send("**Error:** The URL is invalid.");
+            return;
+        }
             if (!servers[message.guild.id]) servers[message.guild.id] = {
                 queue: []
             };
-        }   catch(exception) {
-                message.reply("**Error:** Failed to play.");
-            }
 
-        try {
-            if (!message.member.voiceChannel) {
-                message.reply("**Error:** Please join a voice channel.");
-                return;
-            }
-        } catch(error) {
-            console.error;
-        }
-
-        try {
-            var server = servers[message.guild.id]
-        } catch(exception) {}
-
-        try {
-            server.queue.push(args[1]);
-        ytdl.getInfo(server.queue[0], function(err, info) {
-        try {
-            message.channel.send(":arrow_forward: Added to queue: " + info.title);
-        } catch (exception) {
-            message.channel.send("There was an error.");
-            var server = servers[message.guild.id];
-            if (message.guild.voiceConnection)
-            {
-            for (var i = server.queue.length - 1; i >= 0; i--) 
-            {
-                server.queue.splice(i, 1);
-            }
-            server.dispatcher.end();
-            }
+        if (!message.member.voiceChannel) {
+            message.channel.send("**Error:** Please join a voice channel.");
             return;
         }
-    });
-        } catch(exception) {}
-        try { 
+            var server = servers[message.guild.id]
+
+            server.queue.push(args[1]);
+        ytdl.getInfo(server.queue[0], function(err, info) {
+            embed.addField("Added to queue...", info.title);
+            message.channel.send({embed: embed});
+        });
             if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
                 play(connection, message)
             });
-        } catch(exception) {}
-        }
         break;
         //Skip Track
         case "skip":
@@ -283,6 +283,7 @@ bot.on("message", function(message){
                 server.queue.splice(i, 1);
                 }
                 server.dispatcher.end();
+                console.error;
             }
             return;
         }
@@ -295,14 +296,23 @@ bot.on("message", function(message){
                 {
                     server.queue.splice(i, 1);
                 }
-            server.dispatcher.end();
+            try {
+                server.dispatcher.end()
+            } catch(error) {
+                for (var i = server.queue.length - 1; i >= 0; i--) 
+                {
+                    server.queue.splice(i, 1);
+                }
+                server.dispatcher.end()
+                message.channel.send("error stop");
+            }
             message.channel.send(":stop_button: Stopped and left the voice channel.");
             }
         break;
         //Delete Messages
         case "del":
-            console.log("[INFO] The del command is now depreciated. It'll be removed in the future.");
-            if(message.author.id == message.guild.owner.user.id) {
+            var replymsg = message.content.substr(prefix.length + 4)
+            if(message.author.id == message.guild.owner.user.id || message.author.id == hostid) {
             if(args.length >= 3){
                 message.reply("**Error:** Too many arguments. Usage: `" + prefix + "del [amount]`");
             } else {
@@ -312,8 +322,21 @@ bot.on("message", function(message){
                 } else {
                     msg=parseInt(args[1]) + 1;
                 }
-                message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(console.error);
-                message.reply("Deleted " + msg +" messages.");
+                var num = parseInt(replymsg);
+                if (replymsg.length == 0) {
+                    message.channel.send("**Error:** Please enter a number.");
+                } else if (num != replymsg) {
+                    message.channel.send("**Error:** That's not a number.");
+                } else {
+                message.channel.fetchMessages({limit: msg}).then(messages => message.channel.bulkDelete(messages)).catch(function() {
+                    message.channel.send("**Error:** Failed to delete messages. Make sure I have permission to delete messages.");
+                });
+                if (replymsg == "1") {
+                    message.channel.send("Deleted 1 message.");
+                } else {
+                    message.channel.send("Deleted " + replymsg + " messages.");
+                }
+                }
             }
         } else {
             message.reply("**Error:** Only server owners may use this command.");
@@ -323,30 +346,31 @@ bot.on("message", function(message){
         case "ver":
             message.channel.send(bot.user.username + "'s version is currently v." + pjbVer);
         break;
-        //Power off bot
-        case "poweroff":
-            if (message.author.id == hostid) {
-                message.reply("The bot is now shutting down...").then(function() {
-                process.exit();
-            });
-            } else {
-                message.channel.send("Only the bot's host may power off the bot.");
-            }
-        break;
         //Change User Nickname
         case "nick":
             if (message.author.id == message.guild.owner.user.id) {
                 message.reply("**Error:** Failed to set nickname. I can't edit server owners.");
             } else { var msg = message.content
-                var nick = msg.substring(5);
+                var nick = msg.substr(prefix.length + 5);
                 if (args.length <= 1) {
                     message.reply("I've cleared your nickname.");
-                    message.member.setNickname(nick);
+                    message.member.setNickname(message.author.username).catch(function(error) {
+                        message.channel.send("**Error:** Failed to set nickname. Make sure I have permission to change and set nicknames.");
+                    });
+                } else if (nick == "clear") {
+                    message.reply("I've cleared your nickname.");
+                    message.member.setNickname(message.author.username).catch(function(error) {
+                        message.channel.send("**Error:** Failed to set nickname. Make sure I have permission to change and set nicknames.");
+                        console.error;
+                    });
                 } else if (nick.length >= 33) {
                     message.reply("**Error:** Nicknames cannot be longer than 32 characters.");
                 } else {
                     message.reply("Set your nickname to `" + nick + "`");
-                    message.member.setNickname(nick);
+                    message.member.setNickname(nick).catch(function (error) {
+                        message.channel.send("**Error:** Failed to set nickname. Make sure I have permission to change and set nicknames.");
+                        console.error;
+                    });
                 }
             }
         break;
@@ -482,16 +506,14 @@ bot.on("message", function(message){
                             embed.addField("Usage:", prefix + "rtime");
                             break;
                         default:
-                            embed.setColor("#821f1f");
-                            embed.setDescription("**Error:** The following command: `" + cmdhelp + "` does not exist.");
+                            embed.setAuthor("Error - " + bot.user.username + " Help", "http://i.imgur.com/rZ8dYfw.png")
+                            embed.setColor("#E74C3C");
+                            embed.setDescription("The following command you entered: `" + cmdhelp + "` does not exist.");
                             //embed.addField("Error:", "Cannot find that command.");
                     }
                     message.channel.send({embed: embed});
                 }
             }
-        break;
-        case "help ":
-            message.channel.send("test");
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
@@ -552,6 +574,16 @@ bot.on("message", function(message){
                 message.channel.send("Only the server owner or the bot's host may use this command.");
             }
         break;
+        //Power off bot
+        case "poweroff":
+            if (message.author.id == hostid) {
+                message.channel.send("The bot is now shutting down...").then(function() {
+                process.exit();
+            });
+            } else {
+                message.channel.send("Only the bot's host may power off the bot.");
+            }
+        break;
         //User Information
         case "rtime":
             message.channel.send("**Ping!** Response time: " + Math.round(bot.ping) + "ms.");
@@ -582,7 +614,7 @@ bot.on("message", function(message){
             embed.addField("Host Operating System:", "Platform: " + process.platform + "\nType: " + os.type(), true);
             embed.addField("Architecture:", process.arch);
             embed.addField("Framework:", process.release.name + " " + process.version, true);
-            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "μs\nSystem: " + process.cpuUsage().system + "μs", true);
+            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "\nSystem: " + process.cpuUsage().system, true);
             embed.addField("Total RAM:", os.totalmem() + " bytes");
             embed.addField("Response Time:", Math.round(bot.ping) + " ms", true);
             embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname(), true);
@@ -623,10 +655,9 @@ bot.on("message", function(message){
                     message.channel.send("**Error:** Command not found. Type `" + prefix + "help` to see a list of valid commands.");
                 break;
     }
-    }
 });
 
-console.log("[INFO] Welcome to ProJshBot v." + pjbVer + "!\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.\n[INFO] Current prefix is: " + prefix);
+console.log(chalk.green("[INFO] Welcome to ProJshBot " + chalk.blue("v." + pjbVer + "!") + "\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.\n[INFO] Current prefix is:", chalk.blue(prefix)));
 bot.login(config.token).catch(function() {
-    console.log("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?");
+    console.log(chalk.red("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?"));
 });
