@@ -19,12 +19,15 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.1.2";
+const pjbVer = "1.2";
 
 var prefix = config.prefix;
 var leave = false;
 var ecolor = config.embedcolor;
 var hostid = config.hostid;
+var playerr = false;
+var guildspeak = null;
+var channspeak = null;
 
 //When bot is ready
 bot.on('ready', () => {
@@ -168,13 +171,21 @@ function play(connection, message) {
         else connection.disconnect();
     });
     } catch(error) {
-        message.channel.send("**Error:** Failed to play audio. Make sure the URL is correct.");
-        for (var i = server.queue.length - 1; i >= 0; i--) 
-        {
-        server.queue.splice(i, 1);
+        if (!playerr == true) {
+            message.channel.send("**Error:** Failed to play audio. Make sure the URL is correct.");
+            for (var i = server.queue.length - 1; i >= 0; i--) 
+            {
+            server.queue.splice(i, 1);
+            }
+            connection.disconnect();
+        } else {
+            playerr = false;
+            for (var i = server.queue.length - 1; i >= 0; i--) 
+            {
+            server.queue.splice(i, 1);
+            }
+            connection.disconnect();
         }
-        server.dispatcher.end();
-        connection.disconnect();
     }
 }
 
@@ -244,8 +255,8 @@ bot.on("message", function(message){
             message.channel.send("**Error:** Please add a YouTube link.");
             return;
         }
-        var msg = message.content.substr(5);
-        if (!msg.includes("https://www.youtube.com/watch?v=")) {
+        var msg = message.content.substr(prefix.length + 5);
+        if (!msg.includes("https://www.youtube.com/watch?v=") && !msg.includes("https://youtu.be/")) {
             message.channel.send("**Error:** The URL is invalid.");
             return;
         }
@@ -259,17 +270,18 @@ bot.on("message", function(message){
         }
             var server = servers[message.guild.id]
 
-            server.queue.push(args[1]);
             try {
+            server.queue.push(args[1]);
             ytdl.getInfo(server.queue[0], function(err, info) {
             embed.addField("Added to queue...", info.title);
             message.channel.send({embed: embed});
         });
             } catch(error) {
                 message.channel.send("**Error:** Failed to recieve video information. Make sure the URL is correct.")
+                playerr = true;
             }
             if (!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection) {
-                play(connection, message)
+                play(connection, message);
             });
         break;
         //Skip Track
@@ -350,6 +362,41 @@ bot.on("message", function(message){
         case "ver":
             message.channel.send(bot.user.username + "'s version is currently v." + pjbVer);
         break;
+        case "say":
+        if (message.author.id == hostid) {
+                if (args[1] == "set") {
+                    try {
+                    if (args[2].length > 0) {
+                        if (args[3].length > 0) {
+                            guildspeak = args[2];
+                            channspeak = args[3];
+                            var guild = bot.guilds.get(guildspeak);
+                            var channel = guild.channels.get(channspeak);
+                            message.channel.send("Set the Guild ID to: `" + guildspeak + "` **(" + guild.name + ")** and Channel ID to: `" + guildspeak + "` **(#" + channel.name + ")**").catch(function() {
+                                message.channel.send("There was an error.");
+                            });
+                        }
+                    }
+                    } catch(error) {
+                        message.channel.send("**Error:** Make sure the Guild and Channel IDs are correct.");
+                    }
+                } else if (guildspeak == null || channspeak == null) {
+                    message.channel.send("**Error:** You haven't set a guild or channel yet!");
+                } else {
+                    try {
+                    var msg = message.content.substr(prefix.length + 4);
+                    var guild = bot.guilds.get(guildspeak);
+                    var channel = guild.channels.get(channspeak);
+                    message.channel.send("I've sent the following message: `" + msg + "` on **" + guild.name + "** in the following channel: **#" + channel.name + "**");
+                    channel.send(msg);
+                    } catch(error) {
+                        message.channel.send("There was an error.");
+                    }
+                }
+            } else {
+                message.channel.send("**Error:** Only the bot owner can use this command.");
+            }
+        break;
         //Change User Nickname
         case "nick":
             if (message.author.id == message.guild.owner.user.id) {
@@ -410,7 +457,7 @@ bot.on("message", function(message){
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
                 if (message.author.id == hostid) {
-                    embed.addField("Host Commands:", "poweroff \nleave", true);
+                    embed.addField("Host Commands:", "poweroff \nleave \nsay", true);
                 }
                 embed.setFooter("ProJshBot v." + pjbVer);
                 message.channel.send({embed: embed});
@@ -418,7 +465,7 @@ bot.on("message", function(message){
                 embed = new Discord.RichEmbed("cmdhelp");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
-                embed.setDescription("Help for `" + prefix + cmdhelp +  "`.");
+                embed.setDescription("Help for `" + prefix + cmdhelp +  "`");
                 embed.setFooter("ProJshBot v." + pjbVer);
                 if (args.length >= 3) {
                     message.channel.send("**Error:** You can't enter more than one command!");
@@ -488,16 +535,19 @@ bot.on("message", function(message){
                             embed.addField("Description:", "Shut's the bot down.");
                             embed.addField("Parameters:", "None.");
                             embed.addField("Usage:", prefix + "poweroff");
+                            embed.addField("Note:", "This is a host command.");
                             break;
                         case "del":
                             embed.addField("Description:", "Delete's a series of messages.");
                             embed.addField("Parameters:", "Number of messages.");
                             embed.addField("Usage:", prefix + "del [number]");
+                            embed.addField("Note:", "This is a server owner and host command.");
                             break;
                         case "leave":
                             embed.addField("Description:", "Leave's the current server.");
                             embed.addField("Parameters:", "None.");
                             embed.addField("Usage:", prefix + "leave");
+                            embed.addField("Note:", "This is a server owner and host command.");
                             break;
                         case "help":
                             embed.addField("Description:", "Display's all available commands.");
@@ -508,6 +558,12 @@ bot.on("message", function(message){
                             embed.addField("Description:", "Displays response time (ping).");
                             embed.addField("Parameters:", "None.");
                             embed.addField("Usage:", prefix + "rtime");
+                            break;
+                        case "say":
+                            embed.addField("Description:", "Sends a message in the desired guild and channel.");
+                            embed.addField("Parameters:", "**1**: set, Guild ID, Channel ID.\n**2:** Your message.");
+                            embed.addField("Usage:", prefix + "say set [guild id] [channel id]\n" + prefix + "say [message]");
+                            embed.addField("Note:", "This is a host command.");
                             break;
                         default:
                             embed.setAuthor("Error - " + bot.user.username + " Help", "http://i.imgur.com/rZ8dYfw.png")
