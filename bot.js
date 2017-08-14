@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.3";
+const pjbVer = "1.3.1";
 
 var prefix = config.prefix;
 var leave = false;
@@ -51,6 +51,7 @@ bot.on('ready', (connection, voiceChannel) => {
 });
 
 bot.on("guildMemberAdd", member => {
+    if (!bot.user.id == 341119943682686986) {
     let guild = member.guild;
     embed = new Discord.RichEmbed();
     embed.setAuthor(member.displayName, member.user.displayAvatarURL);
@@ -79,9 +80,11 @@ bot.on("guildMemberAdd", member => {
         guild.channels.get("340694379276664832").send(":arrow_right: " + member.user);
         guild.channels.get("340694379276664832").send({embed: embed});
     }
+    }
 });
 
 bot.on("guildMemberRemove", member => {
+    if (bot.user.id == 341119943682686986) {
     let guild = member.guild;
     if (guild.id == "332047046217433089") {
         guild.channels.get("340637213198909442").send(":arrow_left: " + member.user);
@@ -95,7 +98,7 @@ bot.on("guildMemberRemove", member => {
     if (guild.id == "336487228228370432") {
         guild.channels.get("340694379276664832").send(":arrow_left: " + member.user);
     }
-    
+    }
 });
 
 //Game selection
@@ -614,7 +617,7 @@ bot.on("message", function(message){
             var msg = message.content.substr(prefix + 6);
             if (msg.length = 0) {
                 message.channel.send(message.user.displayAvatarURL);
-            } else if (args[1].includes("<@")) {
+            } else {
                 try {
                     var msg = message.content.substr(prefix.length + 7);
                     var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
@@ -623,8 +626,6 @@ bot.on("message", function(message){
                 } catch(error) {
                     message.channel.send("**Error:** Cannot find that user.");
                 }
-            } else {
-                message.channel.send("**Error:** Cannot find that user.");
             }
         break;
         //Leave Server
@@ -670,7 +671,7 @@ bot.on("message", function(message){
         break;
         case "ship":
             var shipuser = message.guild.members.random().displayName
-            var shipname = message.author.username.substring(0,3) + shipuser.substring(3,6);
+            var shipname = message.author.username.substring(0,3) + shipuser.substr(3);
             message.channel.send(":ship: " + message.author.username + " x " + shipuser + " (Ship name: " + shipname + ")");
         break;
         //Host Information
