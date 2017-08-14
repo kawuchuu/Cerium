@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.2";
+const pjbVer = "1.3";
 
 var prefix = config.prefix;
 var leave = false;
@@ -30,7 +30,7 @@ var guildspeak = null;
 var channspeak = null;
 
 //When bot is ready
-bot.on('ready', () => {
+bot.on('ready', (connection, voiceChannel) => {
     console.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.blue(bot.user.username)));
     bot.setInterval(setGame, 300000);
     setGame();
@@ -384,10 +384,9 @@ bot.on("message", function(message){
                     message.channel.send("**Error:** You haven't set a guild or channel yet!");
                 } else {
                     try {
-                    var msg = message.content.substr(prefix.length + 4);
                     var guild = bot.guilds.get(guildspeak);
                     var channel = guild.channels.get(channspeak);
-                    message.channel.send("I've sent the following message: `" + msg + "` on **" + guild.name + "** in the following channel: **#" + channel.name + "**");
+                    message.channel.send("I've sent the following message: `" + args[1] + "` on **" + guild.name + "** in the following channel: **#" + channel.name + "**");
                     channel.send(msg);
                     } catch(error) {
                         message.channel.send("There was an error.");
@@ -441,8 +440,16 @@ bot.on("message", function(message){
                 time = hours + ":0" + uptimeMinutes
             } else {
                 time = hours + ":" + uptimeMinutes
+            }    
+            if (hours == 1 && uptimeMinutes == 1) {
+                message.channel.send(bot.user.username + " has been online for 1 hour and 1 minute.");
+            } else if (hours == 1) {
+                message.channel.send(bot.user.username + " has been online for 1 hour and " + uptimeMinutes + " minutes.");
+            } else if (uptimeMinutes == 1) {
+                message.channel.send(bot.user.username + " has been online for " + hours + " hours and 1 minute.");
+            } else {
+                message.channel.send(bot.user.username + " has been online for " + hours + " hours and " + uptimeMinutes + " minutes.");
             }
-            message.channel.send(bot.user.username + " has been online for " + time + " hours.");
         break;
         //Help Message
         case "help":
@@ -604,8 +611,21 @@ bot.on("message", function(message){
         break;
         //User Avatar
         case "avatar":
-            var icon = message.author.displayAvatarURL
-            message.channel.send("Here's your avatar URL: " + icon)
+            var msg = message.content.substr(prefix + 6);
+            if (msg.length = 0) {
+                message.channel.send(message.user.displayAvatarURL);
+            } else if (args[1].includes("<@")) {
+                try {
+                    var msg = message.content.substr(prefix.length + 7);
+                    var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
+                    var member = message.guild.members.get(findm);
+                    message.channel.send(member.user.displayAvatarURL);
+                } catch(error) {
+                    message.channel.send("**Error:** Cannot find that user.");
+                }
+            } else {
+                message.channel.send("**Error:** Cannot find that user.");
+            }
         break;
         //Leave Server
         case "leave":
@@ -648,8 +668,13 @@ bot.on("message", function(message){
         case "rtime":
             message.channel.send("**Ping!** Response time: " + Math.round(bot.ping) + "ms.");
         break;
+        case "ship":
+            var shipuser = message.guild.members.random().displayName
+            var shipname = message.author.username.substring(0,3) + shipuser.substring(3,6);
+            message.channel.send(":ship: " + message.author.username + " x " + shipuser + " (Ship name: " + shipname + ")");
+        break;
         //Host Information
-        case "host":            
+        case "host":
             var time;
             var uptime = parseInt(bot.uptime);
             uptime = Math.floor(uptime / 1000);
@@ -664,56 +689,19 @@ bot.on("message", function(message){
                 time = hours + ":0" + uptimeMinutes
             } else {
                 time = hours + ":" + uptimeMinutes
-            }
-            var os = require('os');
-            embed = new Discord.RichEmbed("hinfo");
+            }      
+            var os = require("os");
+            embed = new Discord.RichEmbed("host");
             embed.setColor(ecolor);
-            embed.setAuthor("Host Stats", bot.user.displayAvatarURL);
-            embed.setDescription("This contains information about the bot's host.");
-            embed.addField("Uptime:", time, true);
-            embed.addField("Host Operating System:", "Platform: " + process.platform + "\nType: " + os.type(), true);
-            embed.addField("Architecture:", process.arch);
-            embed.addField("Framework:", process.release.name + " " + process.version, true);
-            embed.addField("CPU Usage:", "User: " + process.cpuUsage().user + "\nSystem: " + process.cpuUsage().system, true);
-            embed.addField("Total RAM:", os.totalmem() + " bytes");
-            embed.addField("Response Time:", Math.round(bot.ping) + " ms", true);
-            embed.addField("Host Names:", "Username: " + os.userInfo().username + "\nHostname: " + os.hostname(), true);
+            embed.setAuthor("Host Stats - " + bot.user.username, bot.user.displayAvatarURL);
+            embed.addField("Uptime & Response Time:", "Uptime: " + time + "\nResponse Time: " + Math.round(bot.ping), true);
+            embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)", true);
             embed.setFooter("ProJshBot v." + pjbVer);
             message.channel.send({embed: embed});
         break;
-        //Old User Information (credits: vicr123/AstralMod)
-        case "olduinfo":
-            var member = message.member;
-                embed = new Discord.RichEmbed("testembed");
-                embed.setColor(ecolor);
-                embed.setAuthor(userString(member), member.user.displayAvatarURL);
-                embed.setDescription("Information about " + userString(member));
-                {
-                    var namemsg = "**Display Name**  " + member.displayName + "\n";
-                        if (member.nickname != null) {
-                            namemsg += "**Nickname**  " + member.nickname + "\n";
-                        } else {
-                            namemsg += "**Nickname**  None\n";
-                        }
-                        namemsg += "**Username**  " + member.user.username + "\n";
-                        embed.addField("Names", namemsg);
-                }
-                {
-                    var timemsg = "**User Created**  " + member.user.createdAt.toUTCString() + "\n";
-                    if (member.joinedAt.getTime() == 0) {
-                        msg += "**User Joined**  Discord isn't working correctly. Check back later.\n";
-                    } else {
-                        timemsg +="**User Joined**  " + member.joinedAt.toUTCString();
-                    }
-                    embed.addField("Timestamps", timemsg);
-                }
-                if (message.author.id == hostid) {
-                    embed.setFooter("ID: " + member.user.id);
-                }
-                message.channel.send("**THIS COMMAND IS IN BETA. DON'T EXPECT IT TO WORK CORRECTLY.** This command was originated from vicr123/AstralMod and slightly modified. All credits should go to vicr123.", {embed: embed});
-                default:
-                    message.channel.send("**Error:** Command not found. Type `" + prefix + "help` to see a list of valid commands.");
-                break;
+        default:
+            message.channel.send("**Error:** Command not found. Type `" + prefix + "help` to see a list of valid commands.");
+        break;
     }
 });
 
