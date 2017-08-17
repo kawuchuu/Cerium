@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.3.1";
+const pjbVer = "1.4";
 
 var prefix = config.prefix;
 var leave = false;
@@ -462,7 +462,7 @@ bot.on("message", function(message){
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime", true);
+                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
@@ -575,11 +575,21 @@ bot.on("message", function(message){
                             embed.addField("Usage:", prefix + "say set [guild id] [channel id]\n" + prefix + "say [message]");
                             embed.addField("Note:", "This is a host command.");
                             break;
+                        case "ship":
+                            embed.addField("Description:", "Sends you onto a ship with a random person on the server.");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "ship");
+                            break;
+                        case "uinfo":
+                            embed.addField("Description:", "Displays information about a user.");
+                            embed.addField("Parameters:", "Any user in the current guild.");
+                            embed.addField("Usage:", prefix + "uinfo [user]");
+                            embed.addField("Notes:", "Only guild owners and the host may search up other users.");
+                            break;
                         default:
                             embed.setAuthor("Error - " + bot.user.username + " Help", "http://i.imgur.com/rZ8dYfw.png")
                             embed.setColor("#E74C3C");
                             embed.setDescription("The following command you entered: `" + cmdhelp + "` does not exist.");
-                            //embed.addField("Error:", "Cannot find that command.");
                     }
                     message.channel.send({embed: embed});
                 }
@@ -626,6 +636,36 @@ bot.on("message", function(message){
                 } catch(error) {
                     message.channel.send("**Error:** Cannot find that user.");
                 }
+            }
+        break;
+        case "uinfo":
+            var msg = message.content.substr(prefix.length + 6);
+            embed = new Discord.RichEmbed("userinfo");
+            embed.setColor(ecolor);
+            embed.setFooter("ProJshBot v." + pjbVer);
+            if (msg.includes("@")){
+                var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
+            } else {
+                var findm = message.author.id;
+            }    
+            try {
+                var member = message.guild.members.get(findm);
+                embed.setAuthor("User Information for " + member.user.username, member.user.displayAvatarURL);
+                embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:**" + member.user.discriminator, true);
+                if (member.nickname == null) {
+                    embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);
+                } else {
+                    embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** " + member.nickname, true);
+                }
+                embed.addField("Dates:", "**User Created:** " + member.user.createdAt.toUTCString() + "\n**User Joined:** " + member.joinedAt.toUTCString());
+                try {
+                    embed.addField("Display:", "**Status:** " + member.user.presence.status + "\n**Currently playing:** " + member.user.presence.game.name);
+                } catch(error) {
+                    embed.addField("Display:", "**Status:** " + member.user.presence.status);
+                }
+                message.channel.send({embed: embed});
+            } catch(error) {
+                message.channel.send("**Error:** Failed to recieve information.");
             }
         break;
         //Leave Server
@@ -699,6 +739,8 @@ bot.on("message", function(message){
             embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)", true);
             embed.setFooter("ProJshBot v." + pjbVer);
             message.channel.send({embed: embed});
+        break;
+        case "":
         break;
         default:
             message.channel.send("**Error:** Command not found. Type `" + prefix + "help` to see a list of valid commands.");
