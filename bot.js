@@ -105,6 +105,7 @@ bot.on("guildMemberRemove", member => {
 function setGame() {
     var presence = {};
     presence.game = {};
+    presence.game.type = 0;
     presence.status = "online";
     presence.afk = false;
     
