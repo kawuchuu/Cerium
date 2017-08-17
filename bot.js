@@ -657,7 +657,7 @@ bot.on("message", function(message){
                 } else {
                     embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** " + member.nickname, true);
                 }
-                embed.addField("Dates:", "**User Created:** " + member.user.createdAt.toUTCString() + "\n**User Joined:** " + member.joinedAt.toUTCString());
+                embed.addField("Dates:", "**User Created:** " + member.user.createdAt + "\n**User Joined:** " + member.joinedAt);
                 try {
                     embed.addField("Display:", "**Status:** " + member.user.presence.status + "\n**Currently playing:** " + member.user.presence.game.name);
                 } catch(error) {
