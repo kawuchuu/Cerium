@@ -651,7 +651,7 @@ bot.on("message", function(message){
             try {
                 var member = message.guild.members.get(findm);
                 embed.setAuthor("User Information for " + member.user.username, member.user.displayAvatarURL);
-                embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:**" + member.user.discriminator, true);
+                embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator, true);
                 if (member.nickname == null) {
                     embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);
                 } else {
