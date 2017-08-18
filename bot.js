@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.4";
+const pjbVer = "1.4.1";
 
 var prefix = config.prefix;
 var leave = false;
@@ -47,57 +47,6 @@ bot.on('ready', (connection, voiceChannel) => {
         process.exit;
     } else {
         console.log(chalk.green("[INFO] The host's user ID is: " + hostid));
-    }
-});
-
-bot.on("guildMemberAdd", member => {
-    if (!bot.user.id == 341119943682686986) {
-    let guild = member.guild;
-    embed = new Discord.RichEmbed();
-    embed.setAuthor(member.displayName, member.user.displayAvatarURL);
-    embed.setColor(ecolor);
-    var msg = "Created: " + member.user.createdAt.toUTCString() + "\n";
-    if (member.joinedAt.toUTCString() == 0) {
-        msg += "Joined: Failed to recieve information.";
-    } else {
-        msg += "Joined: " + member.joinedAt.toUTCString();
-    }
-    embed.setDescription(msg);
-    embed.setFooter("User ID: " + member.user.id);
-    if (guild.id == "332047046217433089") {
-        guild.channels.get("340637213198909442").send(":arrow_right: " + member.user);
-        guild.channels.get("340637213198909442").send({embed: embed});
-    }
-    if (guild.id == "300508987126710283") {
-        guild.channels.get("340658333600186369").send(":arrow_right: " + member.user);
-        guild.channels.get("340658333600186369").send({embed: embed});
-    }
-    if (guild.id == "270785956599037952") {
-        guild.channels.get("340664261141594112").send(":arrow_right: " + member.user);
-        guild.channels.get("340664261141594112").send({embed: embed});
-    }
-    if (guild.id == "336487228228370432") {
-        guild.channels.get("340694379276664832").send(":arrow_right: " + member.user);
-        guild.channels.get("340694379276664832").send({embed: embed});
-    }
-    }
-});
-
-bot.on("guildMemberRemove", member => {
-    if (bot.user.id == 341119943682686986) {
-    let guild = member.guild;
-    if (guild.id == "332047046217433089") {
-        guild.channels.get("340637213198909442").send(":arrow_left: " + member.user);
-    }
-    if (guild.id == "300508987126710283") {
-        guild.channels.get("340658333600186369").send(":arrow_left: " + member.user);
-    }
-    if (guild.id == "270785956599037952") {
-        guild.channels.get("340664261141594112").send(":arrow_left: " + member.user);
-    }
-    if (guild.id == "336487228228370432") {
-        guild.channels.get("340694379276664832").send(":arrow_left: " + member.user);
-    }
     }
 });
 
@@ -209,22 +158,22 @@ bot.on("message", function(message){
         case "ping":
             switch (Math.floor(Math.random() * 50) % 7) {
                 case 0:
-                    message.channel.send("**Pong!** At least I can stay online without breaking during the night!");
+                    message.channel.send("**Pong!** Here's a lovely message for you!");
                     break;
                 case 1:
                     message.channel.send("**Pong!** ちょっと、そこ！");
                     break;
                 case 2:
-                    message.channel.send("**Pong!** I don't break so easily, unlike AstralMod c;");
+                    message.channel.send("**Pong!** idk what to say. Hello, I guess?");
                     break;
                 case 3:
-                    message.channel.send("**Pong!**");
+                    message.channel.send("**Pong!** I'm not dead!");
                     break;
                 case 5:
                     message.channel.send("**Pong!** Type in !help for more commands!");
                     break;
                 case 6:
-                    message.channel.send("**Pong!** This is a test message!");
+                    message.channel.send("**Pong!** Badminton is better than ping pong ;)");
                     break;
             }
         break;
@@ -238,13 +187,13 @@ bot.on("message", function(message){
                     message.channel.send("**Ping!** ProJshBot's current version is " + pjbVer);
                     break;
                 case 3:
-                    message.channel.send("**Ping!** Hello!");
+                    message.channel.send("**Ping!** hai!");
                     break;
                 case 4:
                     message.channel.send("**Ping!**");
                     break;
                 case 5:
-                    message.channel.send("**Ping!** hey there");
+                    message.channel.send("**Ping!** Hey there!");
                     break;
             }
         break;
@@ -598,7 +547,7 @@ bot.on("message", function(message){
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
-            embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_", bot.user.displayAvatarURL);
+            embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_");
             embed.setColor(ecolor);
             embed.setDescription("A work-in-progress Discord bot.");
             embed.addField("Current Account:", bot.user.username, true);
@@ -606,9 +555,10 @@ bot.on("message", function(message){
             embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE", true);
             embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues", true);
             embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md", true);
-            embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core`", true);
+            embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core\nchalk`", true);
             embed.addField("Programs:", "Node.JS\nAny terminal/console client\nFFmpeg (required for `" + prefix + "play` command)", true);
             embed.setFooter("Current server: " + message.guild.name);
+            embed.setThumbnail(bot.user.displayAvatarURL);
             message.channel.send({embed: embed});
         break;
         //Server Information
@@ -620,7 +570,12 @@ bot.on("message", function(message){
             embed.addField("Name:", message.guild.name);
             embed.addField("Server ID:", message.guild.id);
             embed.addField("Creation Date:", message.guild.createdAt.toUTCString());
-            embed.addField("Owner:", message.guild.owner.displayName);
+            if (message.guild.owner.nickname == null) {
+                embed.addField("Owner:", message.guild.owner.user.username);
+            } else {
+                embed.addField("Owner:", message.guild.owner.nickname + " (" + message.guild.owner.user.username + ")");
+            }
+            embed.setThumbnail(message.guild.iconURL);
             message.channel.send({embed: embed});
         break;
         //User Avatar
@@ -651,19 +606,20 @@ bot.on("message", function(message){
             }    
             try {
                 var member = message.guild.members.get(findm);
-                embed.setAuthor("User Information for " + member.user.username, member.user.displayAvatarURL);
+                embed.setAuthor("User Information for " + member.user.username);
                 embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator, true);
                 if (member.nickname == null) {
                     embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);
                 } else {
                     embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** " + member.nickname, true);
                 }
-                embed.addField("Dates:", "**User Created:** " + member.user.createdAt + "\n**User Joined:** " + member.joinedAt);
+                embed.addField("Dates:", "**User Created:** " + member.user.createdAt.toUTCString() + "\n**User Joined:** " + member.joinedAt.toUTCString());
                 try {
                     embed.addField("Display:", "**Status:** " + member.user.presence.status + "\n**Currently playing:** " + member.user.presence.game.name);
                 } catch(error) {
                     embed.addField("Display:", "**Status:** " + member.user.presence.status);
                 }
+                embed.setThumbnail(member.user.displayAvatarURL);
                 message.channel.send({embed: embed});
             } catch(error) {
                 message.channel.send("**Error:** Failed to recieve information.");
