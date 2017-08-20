@@ -19,7 +19,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.4.1";
+const pjbVer = "1.5";
 
 var prefix = config.prefix;
 var leave = false;
@@ -149,6 +149,8 @@ function shutdown() {
 //commands
 bot.on("message", function(message){
     if (message.author.equals(bot.user)) return;
+
+    if (message.author == message.author.bot) return;
 
     if (!message.content.startsWith(prefix)) return;
 
@@ -377,6 +379,9 @@ bot.on("message", function(message){
                 }
             }
         break;
+        case "test":
+            message.channel.send("!ping");
+        break;
         //Bot Uptime
         case "uptime":
             var time;
@@ -412,7 +417,7 @@ bot.on("message", function(message){
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo", true);
+                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo \nflip \nud", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
@@ -536,6 +541,16 @@ bot.on("message", function(message){
                             embed.addField("Usage:", prefix + "uinfo [user]");
                             embed.addField("Notes:", "Only guild owners and the host may search up other users.");
                             break;
+                        case "flip":
+                            embed.addField("Description:", "Flips a coin for you!");
+                            embed.addField("Parameters:", "None.");
+                            embed.addField("Usage:", prefix + "flip");
+                            break;
+                        case "ud":
+                            embed.addField("Description:", "Searches for a definition on the Urban Dictionary.");
+                            embed.addField("Parameters:", "Whatever word/phrase you want to search for");
+                            embed.addField("Usage:", prefix + "ud [word/phrase]");
+                            break;
                         default:
                             embed.setAuthor("Error - " + bot.user.username + " Help", "http://i.imgur.com/rZ8dYfw.png")
                             embed.setColor("#E74C3C");
@@ -578,11 +593,21 @@ bot.on("message", function(message){
             embed.setThumbnail(message.guild.iconURL);
             message.channel.send({embed: embed});
         break;
+        case "ud":
+            var msg = message.content.substr(prefix.length + 3);
+            //terrible way of doing it but it works i guess lel
+            var msglink = msg.replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+");
+            if (msg.length == 0) {
+                message.channel.send("**Error:** You haven't told me what to search for!");
+            } else {
+                message.channel.send("http://www.urbandictionary.com/define.php?term=" + msglink);
+            }
+        break;
         //User Avatar
         case "avatar":
-            var msg = message.content.substr(prefix + 6);
-            if (msg.length = 0) {
-                message.channel.send(message.user.displayAvatarURL);
+            var msg = message.content.substr(prefix.length + 6);
+            if (msg.length == 0) {
+                message.channel.send(message.author.displayAvatarURL);
             } else {
                 try {
                     var msg = message.content.substr(prefix.length + 7);
@@ -607,7 +632,11 @@ bot.on("message", function(message){
             try {
                 var member = message.guild.members.get(findm);
                 embed.setAuthor("User Information for " + member.user.username);
-                embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator, true);
+                if (member.user.bot) {
+                    embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Note:** This user is a bot account.", true);
+                } else {
+                    embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator, true);                    
+                }
                 if (member.nickname == null) {
                     embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);
                 } else {
@@ -670,6 +699,15 @@ bot.on("message", function(message){
             var shipuser = message.guild.members.random().displayName
             var shipname = message.author.username.substring(0,3) + shipuser.substr(3);
             message.channel.send(":ship: " + message.author.username + " x " + shipuser + " (Ship name: " + shipname + ")");
+        break;
+        case "flip":
+            switch (Math.floor(Math.random() * 50) % 2) {
+                case 0:
+                    message.channel.send("I flipped a coin. Looks like it landed on **Heads!**");
+                    break;
+                case 1:
+                    message.channel.send("I flipped a coin. Looks like it landed on **Tails!**");
+            }
         break;
         //Host Information
         case "host":
