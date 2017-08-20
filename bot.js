@@ -22,7 +22,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const cver = "1.6";
+const cver = "1.6.1";
 
 var prefix = config.prefix;
 var leave = false;
@@ -50,6 +50,12 @@ bot.on('ready', (connection, voiceChannel) => {
         process.exit;
     } else {
         console.log(chalk.green("[INFO] The host's user ID is: " + hostid));
+    }
+});
+
+bot.on("guildMemberAdd", member => {
+    if (member.guild.id == 336487228228370432 || bot.user.id == 348759579980595200) { return; } else {
+    member.send("This server contains bots that will store user information. **If you don't agree to this, you should leave this server.**");
     }
 });
 
@@ -156,6 +162,8 @@ bot.on("message", function(message){
     if (message.author == message.author.bot) return;
 
     if (!message.content.startsWith(prefix)) return;
+
+    if (message.guild == null) return;
 
     var args = message.content.substring(prefix.length).split(" ");
     switch (args[0]) {
@@ -420,13 +428,11 @@ bot.on("message", function(message){
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("Cerium Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo \nflip \nud", true);
-                if (message.author.id == message.guild.owner.user.id) {
-                embed.addField("For Server Owners:","del \nleave", true);
-                }
-                if (message.author.id == hostid) {
-                    embed.addField("Host Commands:", "poweroff \nleave \nsay", true);
-                }
+                embed.addField("Core Commands", "ping\npong\nver\nabout\rtime\ndel", true);
+                embed.addField("Normal Commands", "nick\navatar\nsinfo\nhost\nuinfo", true);
+                embed.addField("Fun Commands", "ship\nflip\nud", true);
+                embed.addField("Music Commands", "play\nskip\nstop", true);
+                embed.addField("Host Commands", "poweroff\nleave\nsay", true);
                 embed.setFooter("Cerium v." + cver);
                 message.channel.send({embed: embed});
             } else {
@@ -542,7 +548,6 @@ bot.on("message", function(message){
                             embed.addField("Description:", "Displays information about a user.");
                             embed.addField("Parameters:", "Any user in the current guild.");
                             embed.addField("Usage:", prefix + "uinfo [user]");
-                            embed.addField("Notes:", "Only guild owners and the host may search up other users.");
                             break;
                         case "flip":
                             embed.addField("Description:", "Flips a coin for you!");
@@ -629,6 +634,8 @@ bot.on("message", function(message){
             embed.setFooter("Cerium v." + cver);
             if (msg.includes("@")){
                 var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
+            } else if (msg.length >= 1) {
+                var findm = msg;
             } else {
                 var findm = message.author.id;
             }    
