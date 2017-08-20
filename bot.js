@@ -1,16 +1,19 @@
 /***************************************
  * 
- * ProJshBot: Bot for Discord servers.
+ * Cerium: Bot for Discord servers.
  * Copyright (C) 2017 Joshua Walker.
- * This program is under the terms of the MIT Licence.
- * This program is free of charge. IF YOU PAID FOR THIS
- * PROGRAM, DEMAND A REFUND.
+ * This software is under the terms of the MIT Licence.
  * 
- * This project is in early stages and is nowhere near completed.
- * Expect bugs and crashes to occur.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  * 
  * My GitHub page: https://github.com/projsh
- * This project's repository: https://github.com/projsh/ProJshBot
+ * This project's repository: https://github.com/projsh/Cerium
  * 
  * *************************************/
 
@@ -19,7 +22,7 @@ const config = require("./config.json")
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const bot = new Discord.Client();
-const pjbVer = "1.5";
+const cver = "1.6";
 
 var prefix = config.prefix;
 var leave = false;
@@ -36,10 +39,10 @@ bot.on('ready', (connection, voiceChannel) => {
     setGame();
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
         console.log(chalk.yellow("[WARNING] Embed colour is invalid. Setting to default colour..."));
-        ecolor = "#c374f8";
+        ecolor = "#77162a";
     }
     if (prefix.length == 0) {
-        console.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix..."));
+        console.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix... (default prefix: !)"));
         prefix = "!";
     }
     if (hostid.length == 0) {
@@ -84,7 +87,7 @@ function setGame() {
             presence.game.name = "i can stay online for long periods of time ;)";
             break;
         case 8:
-            presence.game.name = "v." + pjbVer;
+            presence.game.name = "v." + cver;
     }
     bot.user.setPresence(presence);
 }
@@ -186,7 +189,7 @@ bot.on("message", function(message){
                     message.channel.send("**Ping!** jxbot is better than astralmod c;");
                     break;
                 case 1:
-                    message.channel.send("**Ping!** ProJshBot's current version is " + pjbVer);
+                    message.channel.send("**Ping!** Cerium's current version is " + cver);
                     break;
                 case 3:
                     message.channel.send("**Ping!** hai!");
@@ -203,7 +206,7 @@ bot.on("message", function(message){
         case "play":
         embed = new Discord.RichEmbed("playing");
         embed.setAuthor(bot.user.username + " Music Player", bot.user.displayAvatarURL);
-        embed.setFooter("ProJshBot v." + pjbVer);
+        embed.setFooter("Cerium v." + cver);
         embed.setColor(ecolor);
 
         if (!args[1]) {
@@ -315,7 +318,7 @@ bot.on("message", function(message){
         break;
         //Bot Version
         case "ver":
-            message.channel.send(bot.user.username + "'s version is currently v." + pjbVer);
+            message.channel.send(bot.user.username + "'s version is currently v." + cver);
         break;
         case "say":
         if (message.author.id == hostid) {
@@ -417,21 +420,21 @@ bot.on("message", function(message){
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
                 embed.setDescription("All commands are prefixed with: `"+ prefix + "`\nFor more information, type in `" + prefix + "help [command]`");
-                embed.addField("ProJshBot Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo \nflip \nud", true);
+                embed.addField("Cerium Commands:", "ping \npong \nplay \nskip \nstop \navatar \nver \nnick \nuptime \nsinfo \nhost \nabout \nrtime \nship \nuinfo \nflip \nud", true);
                 if (message.author.id == message.guild.owner.user.id) {
                 embed.addField("For Server Owners:","del \nleave", true);
                 }
                 if (message.author.id == hostid) {
                     embed.addField("Host Commands:", "poweroff \nleave \nsay", true);
                 }
-                embed.setFooter("ProJshBot v." + pjbVer);
+                embed.setFooter("Cerium v." + cver);
                 message.channel.send({embed: embed});
             } else {
                 embed = new Discord.RichEmbed("cmdhelp");
                 embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
                 embed.setColor(ecolor);
                 embed.setDescription("Help for `" + prefix + cmdhelp +  "`");
-                embed.setFooter("ProJshBot v." + pjbVer);
+                embed.setFooter("Cerium v." + cver);
                 if (args.length >= 3) {
                     message.channel.send("**Error:** You can't enter more than one command!");
                 } else {
@@ -562,14 +565,14 @@ bot.on("message", function(message){
         break;
         case "about":
             embed = new Discord.RichEmbed("about");
-            embed.setAuthor("ProJshBot v." + pjbVer + " by projsh_");
+            embed.setAuthor("Cerium v." + cver + " by projsh_");
             embed.setColor(ecolor);
-            embed.setDescription("A work-in-progress Discord bot.");
+            embed.setDescription("A Discord bot. What else should I say?");
             embed.addField("Current Account:", bot.user.username, true);
-            embed.addField("Git:", "https://github.com/projsh/ProJshBot", true);
-            embed.addField("License:", "https://github.com/projsh/ProJshBot/blob/master/LICENSE", true);
-            embed.addField("Report bugs here:", "https://github.com/projsh/ProJshBot/issues", true);
-            embed.addField("Readme File:", "https://github.com/projsh/ProJshBot/blob/master/README.md", true);
+            embed.addField("Git:", "https://github.com/projsh/Cerium", true);
+            embed.addField("License:", "https://github.com/projsh/Cerium/blob/master/LICENSE", true);
+            embed.addField("Report bugs here:", "https://github.com/projsh/Cerium/issues", true);
+            embed.addField("Readme File:", "https://github.com/projsh/Cerium/blob/master/README.md", true);
             embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core\nchalk`", true);
             embed.addField("Programs:", "Node.JS\nAny terminal/console client\nFFmpeg (required for `" + prefix + "play` command)", true);
             embed.setFooter("Current server: " + message.guild.name);
@@ -623,7 +626,7 @@ bot.on("message", function(message){
             var msg = message.content.substr(prefix.length + 6);
             embed = new Discord.RichEmbed("userinfo");
             embed.setColor(ecolor);
-            embed.setFooter("ProJshBot v." + pjbVer);
+            embed.setFooter("Cerium v." + cver);
             if (msg.includes("@")){
                 var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
             } else {
@@ -732,7 +735,7 @@ bot.on("message", function(message){
             embed.setAuthor("Host Stats - " + bot.user.username, bot.user.displayAvatarURL);
             embed.addField("Uptime & Response Time:", "Uptime: " + time + "\nResponse Time: " + Math.round(bot.ping), true);
             embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)", true);
-            embed.setFooter("ProJshBot v." + pjbVer);
+            embed.setFooter("Cerium v." + cver);
             message.channel.send({embed: embed});
         break;
         case "":
@@ -743,7 +746,7 @@ bot.on("message", function(message){
     }
 });
 
-console.log(chalk.green("[INFO] Welcome to ProJshBot " + chalk.blue("v." + pjbVer + "!") + "\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure ProJshBot has full access to each server.\n[INFO] Current prefix is:", chalk.blue(prefix)));
+console.log(chalk.green("[INFO] Welcome to Cerium " + chalk.blue("v." + cver) + "\n[INFO] Reading config.json and logging in...\n[WARNING] Make sure Cerium has full access to each server.\n[INFO] Current prefix is:", chalk.blue(prefix)));
 bot.login(config.token).catch(function() {
     console.log(chalk.red("[ERROR] Failed to login. Are you sure the token is correct? Are you connected to the internet?"));
 });

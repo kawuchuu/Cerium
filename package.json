@@ -1,19 +1,19 @@
 {
-  "name": "ProJshBot",
+  "name": "Cerium",
   "version": "1.0.0",
-  "description": "A bot for Discord. It's in early stages and is nowhere near done.",
+  "description": "A Discord bot made by projsh_",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/projsh/ProJshBot.git"
+    "url": "git+https://github.com/projsh/Cerium.git"
   },
   "author": "projsh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/projsh/ProJshBot/issues"
+    "url": "https://github.com/projsh/Cerium/issues"
   },
   "dependencies": {
     "discord.js": "11.1.0",

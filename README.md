@@ -1,6 +1,6 @@
-# ProJshBot
+# Cerium
 
-A Discord bot that's in very early stages. Expect bugs and crashes.
+A Discord bot made by projsh_
 
 # Programs and Packages Required
 - Dependencies
