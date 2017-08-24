@@ -1,10 +1,5 @@
 node_modules
 start.bat
 ffmpeg.exe
-start-n-node.bat
-serverinfo.json
-self.js
-sinfo.json
-music.js
 config.json
-configBackup.json
+.vscode/launch.json

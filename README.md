@@ -1,11 +1,12 @@
 # Cerium
 
 A Discord bot made by projsh_
+Module system by FriendsNone
 
 # Programs and Packages Required
 - Dependencies
     - `discord.js`
-    - `opusscript` (you should use `node-opus` if possible)
+    - `opusscript`
     - `ytdl-core`
     - `chalk`
 - Programs
