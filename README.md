@@ -1,6 +1,7 @@
 # Cerium
 
 A Discord bot made by projsh_
+
 Module system by FriendsNone
 
 # Programs and Packages Required
