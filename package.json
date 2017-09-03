@@ -16,9 +16,10 @@
     "url": "https://github.com/projsh/Cerium/issues"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
+    "chalk": "2.0.0",
     "discord.js": "11.1.0",
     "opusscript": "0.0.3",
-    "ytdl-core": "0.14.4",
-    "chalk": "2.0.0"
+    "ytdl-core": "0.14.4"
   }
 }
