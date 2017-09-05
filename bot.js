@@ -23,7 +23,6 @@ const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const fs = require("fs");
 const blessed = require("blessed");
-const readline = require("readline");
 const bot = new Discord.Client();
 const cver = config.ver;
 
@@ -41,58 +40,141 @@ var screen = blessed.screen({
     smartCSR: true,
     dockBorders: true
 });
-screen.title = 'Cerium ' + cver;
+screen.title = "Cerium " + cver;
 
-var titleBox = blessed.text({
+var titleBar = blessed.text({
     top: "0",
     left: "0",
     width: "100%",
     height: "1",
-    content: "Cerium " + cver + " Console",
+    content: "Cerium Console [v." + cver + "]",
     tags: true,
     style: {
-        fg: 'black',
-        bg: 'white'
+        fg: "black",
+        bg: "white"
     },
     padding: {
         left: 1
     }
 });
-screen.append(titleBox);
+screen.append(titleBar);
 
-var stdinInterface = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
+var logBox = blessed.log({
+    top: 1,
+    left: 0,
+    width: "100%",
+    height: "100%-4",
+    tags: true,
+    style: {
+        fg: 'white',
+        bg: 'black',
+        scrollbar: {
+            bg: 'white'
+        }
+    },
+    padding: {
+        left: 1
+    },
+    scrollable: true,
+    alwaysScroll: true,
+    scrollOnInput: true,
+    scrollbar: true
+});
+screen.append(logBox);
+
+var bottomBar = blessed.box({
+    top: "100%-1",
+    left: "0",
+    width: "100%",
+    height: 1,
+    content: "^C EXIT",
+    tags: true,
+    style: {
+        fg: "black",
+        bg: "white"
+    },
+    padding: {
+        left: 1
+    }
+});
+screen.append(bottomBar);
+
+screen.render();
+
+logBox.on("click", function (mouse) {
+    while (line.indexOf("\x1b") != -1) {
+        var removeStart = line.indexOf("\x1b");
+        var removeEnd = line.indexOf("m", removeStart);
+        line = line.replace(line.slice(removeStart, removeEnd + 1), "");
+    }
+
+    var previousSpace = line.lastIndexOf(" ", x - 2);
+    var nextSpace = line.indexOf(" ", x - 2);
+        
+    previousSpace++;
+    
+    if (nextSpace == -1) {
+        nextSpace = line.length;
+    }
+    var word = line.substring(previousSpace, nextSpace);
+    
+    if (word.startsWith("[")) word = word.substr(1);
+    if (word.endsWith("]")) word = word.substr(0, word.length - 2);
+        
+    var goUpwards = false;
+    var top = y + 1;
+    if (top + 7 > screen.height) {
+        top = y - 7;
+        goUpwards = true;
+    }
+    
+    var left = x - 10;
+    if (left + 50 > screen.width) {
+        left = screen.width - 50;
+    } else if (left < 0) {
+        left = 0;
+    }
 });
 
-stdinInterface.on("line", function(line) {
-    //Input received!
-	
-    var lLine = line.toLowerCase();
-    if (lLine == "help") {
-        console.log(chalk.yellow("\n[Cerium Console Commands]") + "\nConsole commands are coming soon!");
-    } else {
-        console.log(chalk.yellow("[CONSOLE] Console commands are coming soon!"));
-    }
+screen.key("up", function() {
+    logBox.scroll(-1);
+    screen.render();
+});
+
+screen.key("pageup", function() {
+    logBox.scroll(-logBox.height);
+    screen.render();
+});
+
+screen.key("down", function() {
+    logBox.scroll(1);
+    screen.render();
+});
+
+screen.key("pagedown", function() {
+    logBox.scroll(logBox.height);
+    screen.render();
+});
+screen.key("C-c", function() {
+    process.exit();
 });
 
 //When bot is ready
 bot.on('ready', () => {
-    console.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.blue(bot.user.username)));
-    console.log(chalk.green("[INFO] Welcome to Cerium " + chalk.blue("v." + cver) + "\n[INFO] Current prefix is:", chalk.blue(prefix)));
+    logBox.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.cyan(bot.user.username)));
+    logBox.log(chalk.green("[INFO] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[INFO] Current prefix is:", chalk.cyan(prefix)));
     bot.setInterval(setGame, 300000);
     setGame();
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
-        console.log(chalk.yellow("[WARNING] Embed colour is invalid. Setting to default colour..."));
+        logBox.log(chalk.yellow("[WARNING] Embed colour is invalid. Setting to default colour..."));
         ecolor = "#77162a";
     }
     if (prefix.length == 0) {
-        console.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix... (default prefix: !)"));
+        logBox.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix... (default prefix: !)"));
         prefix = "!";
     }
     if (hostid.length == 0) {
-        console.log(chalk.red("[ERROR] Cannot find the host's user ID in config.json. Cannot continue operation."));
+        logBox.log(chalk.red("[ERROR] Cannot find the host's user ID in config.json. Cannot continue operation."));
         process.exit;
     }
 });
@@ -147,27 +229,27 @@ fs.readdir("./modules/", (err, files) => {
 
     let modules = files.filter(f => f.split(".").pop() === "js");
     if (modules.length <= 0) {
-        console.log(chalk.yellow("[MODULES WARNING] No modules were found. Continuing without modules..."));
+        logBox.log(chalk.yellow("[MODULES WARNING] No modules were found. Continuing without modules..."));
         return;
     }
 
-    console.log(chalk.cyan("[MODULES] Loading " + modules.length + " modules..."));
+    logBox.log(chalk.cyan("[MODULES] Loading " + modules.length + " modules..."));
     modules.forEach((f, i) => {
         try {
         let props = require(`./modules/${f}`);
             bot.commands.set(props.help.name, props);
         } catch (err) {
-            console.log(chalk.red("[MODULES ERROR] A module caused an error. Check your modules.\nError => " + err));
+            logBox.log(chalk.red("[MODULES ERROR] A module caused an error. Check your modules.\nError => " + err));
             process.exit(1)
         }
     })
 
-    console.log(chalk.cyan("[MODULES] Loaded " + modules.length + " modules successfully."));
+    logBox.log(chalk.cyan("[MODULES] Loaded " + modules.length + " modules successfully."));
 })
 
 //login
 bot.login(config.token).catch(function() {
-    console.log(chalk.red("[ERROR] Failed to login. Exiting..."));
+    logBox.log(chalk.red("[ERROR] Failed to login. Exiting..."));
     process.exit();
 });
 
