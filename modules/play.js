@@ -3,6 +3,8 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
     const ytdl = require("ytdl-core");
     const config = require("../config.json");
 
+    var npicon = "../pIcon.png";
+
     var msg = message.content.substr(config.prefix.length + 5);
     if (!msg.includes("https://www.youtube.com/watch?v=") && !msg.includes("https://youtu.be/")) {
         message.channel.send("**Error:** The URL is invalid.");
@@ -18,7 +20,7 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
     server.queue.push(args[0]);
     ytdl.getInfo(server.queue[0], function(err, info) {
         embed = new Discord.RichEmbed();
-        embed.setAuthor(bot.user.username + " Music Player", bot.user.displayAvatarURL);
+        embed.setAuthor(bot.user.username + " Music Player", "https://i.imgur.com/mvwmS9z.png");
         embed.setFooter("Cerium v." + config.ver);
         embed.setColor(config.embedcolor);
         embed.addField("Added to queue...", info.title);

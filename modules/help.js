@@ -5,10 +5,10 @@ module.exports.run = async (bot, message, args) => {
     if (!args[0]) {
         embed = new Discord.RichEmbed()
             embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
-            embed.setDescription("All commands are prefixed with: `"+ config.prefix + "`\nFor more information, type in `" + config.prefix + "help [command]`");
-            embed.addField("Core Commands", "ping\npong\nver\nabout\ndel", true);
+            embed.setDescription("For more information, type in `" + config.prefix + "help [command]`");
+            embed.addField("Core Commands", "ping\npong\nver\nabout", true);
             embed.addField("Normal Commands", "nick\navatar\nsinfo\nhost\nuinfo", true);
-            embed.addField("Fun Commands", "ship\nflip\nud", true);
+            embed.addField("Fun Commands", "ship\nflip\nud\nkiss", true);
             embed.addField("Music Commands", "play\nskip\nstop", true);
             embed.addField("Host Commands", "poweroff\nleave", true);
             embed.setColor(config.embedcolor);

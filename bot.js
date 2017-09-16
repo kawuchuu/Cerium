@@ -87,7 +87,7 @@ var bottomBar = blessed.box({
     left: "0",
     width: "100%",
     height: 1,
-    content: "^C EXIT",
+    content: "^C EXIT   ^G HELP",
     tags: true,
     style: {
         fg: "black",
@@ -98,6 +98,26 @@ var bottomBar = blessed.box({
     }
 });
 screen.append(bottomBar);
+
+var box = blessed.box({
+    top: 'center',
+    left: 'center',
+    width: '50%',
+    height: '50%',
+    tags: true,
+    border: {
+      type: 'line'
+    },
+    style: {
+      fg: 'black',
+      bg: 'white',
+      border: {
+        fg: 'white'
+      }
+    }
+});
+box.hide();
+screen.append(box);
 
 screen.render();
 
@@ -157,6 +177,16 @@ screen.key("pagedown", function() {
 });
 screen.key("C-c", function() {
     process.exit();
+});
+screen.key('C-g', function() {
+    box.setContent("{center}-===========-\nCERIUM HELP\n-===========-\nNOTE: This is Cerium's console help. For help with bot commands, type in " + config.prefix + "help on a server with Cerium." +
+    "\n \n• This is Cerium's console. At this current time, it's a place to keep track on what Cerium's up to.\n• Currently, there isn't a whole lot to talk about. This help box will contain more information later in the future. Press enter to close this box.");
+    box.show();
+    screen.render();
+});
+screen.key("enter", function() {
+    box.hide();
+    screen.render();
 });
 
 //When bot is ready
@@ -249,8 +279,10 @@ fs.readdir("./modules/", (err, files) => {
 
 //login
 bot.login(config.token).catch(function() {
-    logBox.log(chalk.red("[ERROR] Failed to login. Exiting..."));
-    process.exit();
+    logBox.log(chalk.red("[ERROR] Failed to login. Press enter or ^C to exit."));
+    screen.key("enter", function () {
+        process.exit();
+    });
 });
 
 bot.on("message", async message => {
