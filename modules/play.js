@@ -24,16 +24,18 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
             if(err) {
                 return message.channel.send("**Error:** Failed to recieve search results.");
             }
+            if(results[0].kind == 'youtube#channel') return message.channel.send("**Error:** Failed to recieve search results.");
             var video = results[0].link;
             server.queue.push(video);
-            ytdl.getInfo(server.queue[0], function(err, info) {
             embed = new Discord.RichEmbed();
             embed.setAuthor(bot.user.username + " Music Player", "https://i.imgur.com/mvwmS9z.png");
             embed.setFooter("Cerium v." + config.ver);
             embed.setColor(config.embedcolor);
-            embed.addField("Added to queue...", info.title);
+            embed.setDescription("Added to queue...");
+            embed.addField("Title:", results[0].title);
+            embed.addField("Link:", results[0].link);
+            embed.addField("Channel:", results[0].channelTitle);
             message.channel.send({embed: embed});
-        });
         });
     }
     } catch(error) {
