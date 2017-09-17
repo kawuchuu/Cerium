@@ -21,6 +21,7 @@
     "discord.js": "11.1.0",
     "opusscript": "0.0.3",
     "superagent": "^3.6.0",
+    "youtube-search": "^1.0.10",
     "ytdl-core": "0.14.4"
   }
 }

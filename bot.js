@@ -26,10 +26,7 @@ const blessed = require("blessed");
 const bot = new Discord.Client();
 const cver = config.ver;
 
-var prefix = config.prefix;
 var leave = false;
-var ecolor = config.embedcolor;
-var hostid = config.hostid;
 var playerr = false;
 var guildspeak = null;
 var channspeak = null;
@@ -192,18 +189,16 @@ screen.key("enter", function() {
 //When bot is ready
 bot.on('ready', () => {
     logBox.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.cyan(bot.user.username)));
-    logBox.log(chalk.green("[INFO] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[INFO] Current prefix is:", chalk.cyan(prefix)));
+    logBox.log(chalk.green("[INFO] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[INFO] Current prefix is:", chalk.cyan(config.prefix)));
     bot.setInterval(setGame, 300000);
     setGame();
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
-        logBox.log(chalk.yellow("[WARNING] Embed colour is invalid. Setting to default colour..."));
-        ecolor = "#77162a";
+        logBox.log(chalk.yellow("[WARNING] Embed colour is invalid."));
     }
-    if (prefix.length == 0) {
-        logBox.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json. Setting default prefix... (default prefix: !)"));
-        prefix = "!";
+    if (config.prefix.length == 0) {
+        logBox.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json."));
     }
-    if (hostid.length == 0) {
+    if (config.hostid.length == 0) {
         logBox.log(chalk.red("[ERROR] Cannot find the host's user ID in config.json. Cannot continue operation."));
         process.exit;
     }
@@ -240,7 +235,7 @@ function setGame() {
             presence.game.name = "lel";
             break;
         case 5:
-            presence.game.name = prefix + "help for help";
+            presence.game.name = config.prefix + "help for help";
             break;
         case 6:
             presence.game.name = "Wow Ethan! Great moves, keep it up! Proud of you!";
@@ -300,7 +295,7 @@ bot.on("message", async message => {
     let cmd = bot.commands.get(command.slice(config.prefix.length))
 
     if (cmd) {
-        cmd.run(bot, message, args, Discord, config, cver);
+        cmd.run(bot, message, args, Discord, config, logBox);
     } else {
         message.channel.send("**Error:** Command not found. Type `" + config.prefix + "help` for a list of valid commands.");
     }
