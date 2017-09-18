@@ -5,7 +5,7 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
 
     const search = require("youtube-search");
     var opts = {
-        maxResults: 1,
+        maxResults: 3,
         key: config.ytskey
       };
 
@@ -24,17 +24,27 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
             if(err) {
                 return message.channel.send("**Error:** Failed to recieve search results.");
             }
-            if(results[0].kind == 'youtube#channel') return message.channel.send("**Error:** Failed to recieve search results.");
-            var video = results[0].link;
-            server.queue.push(video);
+            var video = results[0];
+            if(results[0].kind == 'youtube#channel') {
+                video = results[1];
+                if (results[1].kind == 'youtube#channel') {
+                    video = results[2];
+                    if (results[2].link == 'youtube#channel') {
+                        video = results[3];
+                        if (results[3] == 'youtube#channel') return message.channel.send("**Error** Failed to recieve search results.");
+                    }
+                }
+            }
+            
+            server.queue.push(video.link);
             embed = new Discord.RichEmbed();
             embed.setAuthor(bot.user.username + " Music Player", "https://i.imgur.com/mvwmS9z.png");
             embed.setFooter("Cerium v." + config.ver);
             embed.setColor(config.embedcolor);
             embed.setDescription("Added to queue...");
-            embed.addField("Title:", results[0].title);
-            embed.addField("Link:", results[0].link);
-            embed.addField("Channel:", results[0].channelTitle);
+            embed.addField("Title:", video.title);
+            embed.addField("Link:", video.link);
+            embed.addField("Channel:", video.channelTitle);
             message.channel.send({embed: embed});
         });
     }
