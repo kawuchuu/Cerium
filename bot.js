@@ -290,13 +290,9 @@ bot.on("message", async message => {
     let args  = array.slice(1);
 
     if (!command.startsWith(config.prefix)) return;
-    if (msg.includes(config.prefix)) return;
-    if (!msg) return;
     let cmd = bot.commands.get(command.slice(config.prefix.length))
 
     if (cmd) {
         cmd.run(bot, message, args, Discord, config, logBox);
-    } else {
-        message.channel.send("**Error:** Command not found. Type `" + config.prefix + "help` for a list of valid commands.");
     }
 });

@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, args, Discord, config, cver) => {
     embed.setAuthor("Host Stats - " + bot.user.username, bot.user.displayAvatarURL);
     embed.addField("Uptime & Response Time:", "Uptime: " + time + "\nResponse Time: " + Math.round(bot.ping), true);
     embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)", true);
-    embed.setFooter("Cerium v." + cver);
+    embed.setFooter("Cerium v." + config.ver);
     message.channel.send({embed: embed});
 }
 module.exports.help = {

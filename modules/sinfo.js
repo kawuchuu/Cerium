@@ -13,6 +13,7 @@ module.exports.run = async (bot, message, args, Discord) => {
         embed.addField("Owner:", message.guild.owner.nickname + " (" + message.guild.owner.user.username + ")");
     }
     embed.setThumbnail(message.guild.iconURL);
+    embed.setFooter("Cerium v." + config.ver);
     message.channel.send({embed: embed});
 }
 module.exports.help = {
