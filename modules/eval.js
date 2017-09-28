@@ -5,6 +5,17 @@ module.exports.run = async (bot, message, args, Discord) => {
     embed.setFooter("Cerium v." + config.ver);
     if (message.author.id == config.hostid) {
     var code = args.join(" ");
+    var msg = message.content.substr(config.prefix.length + 5);
+    if (msg.length > 300) {
+        msg = message.content.substring(config.prefix.length + 5,300);
+        var rmchar = message.content.substr(config.prefix.length+5+300);
+        if (rmchar.length == 1) {
+            msg += "... (1 character remaining...)";
+        } else {
+            msg += "... \n(" + rmchar.length + " characters remaining...)";
+        }
+    }
+    message.delete();
     try {
         function clean(text) {
             if (typeof(text) === "string") {
@@ -16,7 +27,7 @@ module.exports.run = async (bot, message, args, Discord) => {
             evaled = require("util").inspect(evaled);
         }
         embed.setAuthor("Eval Result");
-        embed.addField(":inbox_tray: Input:", "```js\n" + message.content.substr(config.prefix.length + 5) + "```");
+        embed.addField(":inbox_tray: Input:", "```js\n" + msg + "```");
         embed.addField(":outbox_tray: Output:", "```js\n" + clean(evaled) + "```");
         message.channel.send({embed: embed});
     } catch(error) {
