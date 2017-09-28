@@ -45,6 +45,7 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
             embed.addField("Title:", video.title);
             embed.addField("Link:", video.link);
             embed.addField("Channel:", video.channelTitle);
+            embed.setThumbnail(video.thumbnails.default.url)
             message.channel.send({embed: embed});
         });
     }

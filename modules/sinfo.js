@@ -8,9 +8,9 @@ module.exports.run = async (bot, message, args, Discord) => {
     embed.addField("Server ID:", message.guild.id);
     embed.addField("Creation Date:", message.guild.createdAt.toUTCString());
     if (message.guild.owner.nickname == null) {
-        embed.addField("Owner:", message.guild.owner.user.username);
+        embed.addField("Owner:", message.guild.owner.user.tag);
     } else {
-        embed.addField("Owner:", message.guild.owner.nickname + " (" + message.guild.owner.user.username + ")");
+        embed.addField("Owner:", message.guild.owner.nickname + " (" + message.guild.owner.user.tag + ")");
     }
     embed.setThumbnail(message.guild.iconURL);
     embed.setFooter("Cerium v." + config.ver);
