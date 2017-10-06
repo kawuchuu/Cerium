@@ -27,9 +27,9 @@ module.exports.run = async (bot, message, args, Discord) => {
     try {
         embed.setAuthor("User Information for " + member.user.username);
         if (member.user.bot) {
-            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Note:** This user is a bot account.", true);
+            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Account Type:** Bot Account", true);
         } else {
-            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator, true);                    
+            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Account Type:** User Account", true);                    
         }
         if (member.nickname == null) {
             embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);

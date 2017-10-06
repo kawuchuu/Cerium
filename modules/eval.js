@@ -33,6 +33,7 @@ module.exports.run = async (bot, message, args, Discord) => {
     } catch(error) {
         embed.setAuthor("Eval Error");
         embed.addField(":no_entry_sign: Error:", "```js\n" + error + "```");
+        embed.addField(":inbox_tray: Input:", "```js\n" + msg + "```");
         embed.addField(":outbox_tray: Output:", "```js\n" + clean(evaled) + "```");
         embed.setColor("#ff3535");
         message.channel.send({embed: embed});

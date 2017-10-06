@@ -1,19 +1,14 @@
 /***************************************
  * 
- * Cerium: Bot for Discord servers.
+ * Cerium -  A fun little Discord bot.
  * Copyright (C) 2017 Joshua Walker.
- * This software is under the terms of the MIT Licence.
+ * This software is under the terms of the GNU General Public Licence (v.3.0).
  * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * You should have recieved a copy of this licence along with this bot.
+ * If not, please visit the following website: http://www.gnu.org/licenses
  * 
  * My GitHub page: https://github.com/projsh
- * This project's repository: https://github.com/projsh/Cerium
+ * Git: https://github.com/projsh/Cerium.git
  * 
  * *************************************/
  
