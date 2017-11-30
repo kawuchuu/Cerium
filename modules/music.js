@@ -93,6 +93,7 @@ module.exports.run = async (bot, message, args, Discord) => {
         break;
 
         case "skip":
+            var server = music.servers[message.guild.id];    
             if (server.dispatcher) server.dispatcher.end();
             message.channel.send("Skipped the song.");
         break;   
