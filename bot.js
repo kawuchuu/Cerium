@@ -181,31 +181,33 @@ screen.key("enter", function() {
     screen.render();
 });
 
-//When bot is ready
+//ready
 bot.on('ready', () => {
-    logBox.log(chalk.green("[INFO] Success! I've logged into the following bot account:", chalk.cyan(bot.user.username)));
-    logBox.log(chalk.green("[INFO] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[INFO] Current prefix is:", chalk.cyan(config.prefix)));
+    logBox.log(chalk.green("[i] Successfully logged into:", chalk.cyan(bot.user.username)));
+    logBox.log(chalk.green("[i] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[i] Current prefix is:", chalk.cyan(config.prefix)));
     bot.setInterval(setGame, 300000);
     setGame();
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
-        logBox.log(chalk.yellow("[WARNING] Embed colour is invalid."));
+        logBox.log(chalk.yellow("[!] Embed colour is invalid."));
     }
     if (config.prefix.length == 0) {
-        logBox.log(chalk.yellow("[WARNING] Cannot find a valid prefix in config.json."));
+        logBox.log(chalk.yellow("[!] Cannot find a valid prefix in config.json."));
     }
     if (config.hostid.length == 0) {
-        logBox.log(chalk.red("[ERROR] Cannot find the host's user ID in config.json. Cannot continue operation."));
+        logBox.log(chalk.red("[X] Cannot find the host's user ID in config.json. Cannot continue operation."));
         process.exit;
     }
 });
 
 bot.on("guildMemberAdd", member => {
-    if (member.guild.id == 336487228228370432 || bot.user.id == 348759579980595200) { return; } else {
-    member.send("This server contains bots that will store user information. **If you do not agree to this, your only recourse is to leave this server.**");
+    if (member.guild.id == 336487228228370432) {
+        return;
+    } else {
+        member.send("'" + member.guild.name + "' contains bots that collect user information. If you do not agree, **your only recourse is to leave the server.**");
     }
 });
 
-//Game selection
+//playing status
 function setGame() {
     var presence = {};
     presence.game = {};
@@ -213,7 +215,7 @@ function setGame() {
     presence.status = "online";
     presence.afk = false;
     
-    switch (Math.floor(Math.random() * 1000) % 9) {
+    switch (Math.floor(Math.random() * 1000) % 5) {
         case 0:
             presence.game.name = "a game";
             break;
@@ -221,60 +223,50 @@ function setGame() {
             presence.game.name = "a youtube video";
             break;
         case 2:
-            presence.game.name = "un-breaking";
-            break;
-        case 3:
             presence.game.name = "something";
             break;
+        case 3:
+            presence.game.name = "Need help? Type" + config.prefix + "help";
+            break;
         case 4:
-            presence.game.name = "lel";
-            break;
-        case 5:
-            presence.game.name = config.prefix + "help for help";
-            break;
-        case 6:
-            presence.game.name = "Wow Ethan! Great moves, keep it up! Proud of you!";
-            break;
-        case 7:
-            presence.game.name = "wew";
-            break;
-        case 8:
             presence.game.name = "v." + cver;
     }
     bot.user.setPresence(presence);
 }
 
+//modules loader
 fs.readdir("./modules/", (err, files) => {
-    if (err) console.error(err);
+    if (err) logBox.log(chalk.red("[X] " + err));
 
     let modules = files.filter(f => f.split(".").pop() === "js");
     if (modules.length <= 0) {
-        logBox.log(chalk.yellow("[MODULES WARNING] No modules were found. Continuing without modules..."));
+        logBox.log(chalk.yellow("[M] No modules were found. Continuing without modules..."));
         return;
     }
 
-    logBox.log(chalk.cyan("[MODULES] Loading " + modules.length + " modules..."));
+    logBox.log(chalk.cyan("[M] Loading " + modules.length + " modules..."));
     modules.forEach((f, i) => {
         try {
         let props = require(`./modules/${f}`);
             bot.commands.set(props.help.name, props);
         } catch (err) {
-            logBox.log(chalk.red("[MODULES ERROR] A module caused an error. Check your modules.\nError => " + err));
+            logBox.log(chalk.red("[X] There is a problem with one of your modules. \n=> " + err));
             process.exit(1)
         }
     })
 
-    logBox.log(chalk.cyan("[MODULES] Loaded " + modules.length + " modules successfully."));
+    logBox.log(chalk.cyan("[M] Loaded " + modules.length + " modules successfully."));
 })
 
 //login
 bot.login(config.token).catch(function() {
-    logBox.log(chalk.red("[ERROR] Failed to login. Press enter or ^C to exit."));
+    logBox.log(chalk.red("[X] Failed to login. Press enter or ^C to exit."));
     screen.key("enter", function () {
         process.exit();
     });
 });
 
+//command handler
 bot.on("message", async message => {
     if (message.author.bot) return;
     if (message.channel.type === "dm") return;

@@ -1,22 +1,20 @@
 module.exports.run = async (bot, message, args) => {
-    switch (Math.floor(Math.random() * 50) % 7) {
+    const config = require('../config.json');
+    switch (Math.floor(Math.random() * 50) % 6) {
         case 0:
             message.channel.send("**Pong!** Here's a lovely message for you!");
             break;
         case 1:
-            message.channel.send("**Pong!** ちょっと、そこ！");
+            message.channel.send("**Pong!** I'm better than ever!");
             break;
         case 2:
-            message.channel.send("**Pong!** idk what to say. Hello, I guess?");
+            message.channel.send("**Pong!** Hey there!");
             break;
         case 3:
-            message.channel.send("**Pong!** I'm not dead!");
+            message.channel.send("**Pong!** Looks like I'm online!");
             break;
-        case 5:
-            message.channel.send("**Pong!** Type in !help for more commands!");
-            break;
-        case 6:
-            message.channel.send("**Pong!** Badminton is better than ping pong ;)");
+        case 4:
+            message.channel.send("**Pong!** Type in " + config.prefix + "help for more commands!");
             break;
     }
 }

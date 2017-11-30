@@ -8,13 +8,18 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
         maxResults: 3,
         key: config.ytskey
       };
-
+    
+    message.channel.send("**WARNING:** This version of the music player is now deprecated. Please use `" + config.prefix + "music play` instead.\nFor more info, type `" + config.prefix + "help music`.\nContinuing in 3 seconds...");
+    setTimeout(function(){
     var msg = message.content.substr(config.prefix.length + 5);
-
     if(!message.member.voiceChannel) return message.channel.send("**Error:** Please join a voice channel.");
     if(!args[0]) return message.channel.send("**Error:** Please add a YouTube link or search query.");
     if(!music.servers[message.guild.id]) music.servers[message.guild.id] = { queue: [] };
-
+    if(message.guild.members.get(bot.user.id).serverMute == true) { 
+        if (!message.guild.voiceConnection) message.member.voiceChannel.join();
+        return message.channel.send("I'm currently muted. Please unmute me before playing.");
+    }
+    
     var server = music.servers[message.guild.id];
     try {
         if (args[0].startsWith("https://www.youtube.com/watch?v=") && args[0].startsWith("https://youtu.be/")) {
@@ -63,6 +68,7 @@ module.exports.run = async (bot, message, args, Discord, cver) => {
     } catch(error) {
         message.channel.send("**Error:** Failed to play.")
     }
+    },3000);
 }
 module.exports.help = {
     name: "play",
