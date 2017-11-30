@@ -226,7 +226,7 @@ function setGame() {
             presence.game.name = "something";
             break;
         case 3:
-            presence.game.name = "Need help? Type" + config.prefix + "help";
+            presence.game.name = "Need help? Type " + config.prefix + "help";
             break;
         case 4:
             presence.game.name = "v." + cver;

@@ -1,9 +1,6 @@
 module.exports.run = async (bot, message, args) => {
-    const music = require('../player.js');
-    var server = music.servers[message.guild.id];
-
-    if (server.dispatcher) server.dispatcher.end();
-    message.channel.send("Skipped a song.");
+    const config = require("../config.json");
+    message.channel.send("This version of the music player is no longer supported. Please use `" + config.prefix + "music skip` instead.\nFor more information, type `" + config.prefix + "help music`.");
 }
 
 module.exports.help = {
