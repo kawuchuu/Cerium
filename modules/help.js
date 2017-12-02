@@ -1,14 +1,14 @@
-module.exports.run = async (bot, message, args) => { 
+module.exports.run = async (bot, message, args) => {
     const Discord = require("discord.js");
     const config = require("../config.json");
 
     if (!args[0]) {
         embed = new Discord.RichEmbed()
-            embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);
+            embed.setAuthor(`Help - ${bot.user.username}`, bot.user.displayAvatarURL);
             embed.setDescription("For more information, type in `" + config.prefix + "help [command]`");
             embed.addField("Core Commands", "ping\nabout\nmusic", true);
             embed.addField("Normal Commands", "nick\navatar\nsinfo\nhost\nuinfo", true);
-            embed.addField("Fun Commands", "ship\nflip\nud\nkiss", true);
+            embed.addField("Fun Commands", "ship\nflip\nud", true);
             embed.addField("Host Commands", "poweroff\neval", true);
             embed.setColor(config.embedcolor);
             embed.setFooter("Cerium v." + config.ver);
@@ -17,9 +17,9 @@ module.exports.run = async (bot, message, args) => {
         embed = new Discord.RichEmbed();
         embed.setColor(config.embedcolor);
         embed.setFooter("Cerium v." + config.ver);
-        embed.setAuthor(bot.user.username + " Help", bot.user.displayAvatarURL);        
+        embed.setAuthor(`Help - ${bot.user.username}`, bot.user.displayAvatarURL);
         if (args[0] == "music") {
-            embed.setAuthor(bot.user.username + " Help - Music Commands", bot.user.displayAvatarURL);
+            embed.setAuthor(`Music Help - ${bot.user.username}`, bot.user.displayAvatarURL);
             embed.addField("Play","**Usage:** `" + config.prefix + "music play [search query]`\n**Description:** Plays a YouTube video in your current voice channel.");
             embed.addField("Pause","**Usage:** `" + config.prefix + "music pause`\n**Description:** Pauses the current song.");
             embed.addField("Resume","**Usage:** `" + config.prefix + "music resume`\n**Description:** Resumes the current song if paused.");

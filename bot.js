@@ -1,17 +1,17 @@
 /***************************************
- * 
+ *
  * Cerium -  A fun little Discord bot.
  * Copyright (C) 2017 Joshua Walker.
  * This software is under the terms of the GNU General Public Licence (v.3.0).
- * 
+ *
  * You should have recieved a copy of this licence along with this bot.
  * If not, please visit the following website: http://www.gnu.org/licenses
- * 
+ *
  * My GitHub page: https://github.com/projsh
  * Git: https://github.com/projsh/Cerium.git
- * 
+ *
  * *************************************/
- 
+
 const Discord = require("discord.js");
 const config = require("./config.json")
 const ytdl = require("ytdl-core");
@@ -122,24 +122,24 @@ logBox.on("click", function (mouse) {
 
     var previousSpace = line.lastIndexOf(" ", x - 2);
     var nextSpace = line.indexOf(" ", x - 2);
-        
+
     previousSpace++;
-    
+
     if (nextSpace == -1) {
         nextSpace = line.length;
     }
     var word = line.substring(previousSpace, nextSpace);
-    
+
     if (word.startsWith("[")) word = word.substr(1);
     if (word.endsWith("]")) word = word.substr(0, word.length - 2);
-        
+
     var goUpwards = false;
     var top = y + 1;
     if (top + 7 > screen.height) {
         top = y - 7;
         goUpwards = true;
     }
-    
+
     var left = x - 10;
     if (left + 50 > screen.width) {
         left = screen.width - 50;
@@ -214,21 +214,12 @@ function setGame() {
     presence.game.type = 0;
     presence.status = "online";
     presence.afk = false;
-    
-    switch (Math.floor(Math.random() * 1000) % 5) {
+
+    switch (Math.floor(Math.random() * 1000) % 2) {
         case 0:
-            presence.game.name = "a game";
+            presence.game.name = "Need help? | " + config.prefix + "help";
             break;
         case 1:
-            presence.game.name = "a youtube video";
-            break;
-        case 2:
-            presence.game.name = "something";
-            break;
-        case 3:
-            presence.game.name = "Need help? Type " + config.prefix + "help";
-            break;
-        case 4:
             presence.game.name = "v." + cver;
     }
     bot.user.setPresence(presence);

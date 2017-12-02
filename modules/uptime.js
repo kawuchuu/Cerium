@@ -10,8 +10,8 @@ module.exports.run = async (bot, message, args, Discord) => {
     while (uptimeMinutes >= 60) {
         hours++;
         uptimeMinutes = uptimeMinutes - 60;
-    }  
-    embed.setAuthor(bot.user.username + " Uptime");
+    }
+    embed.setAuthor(`Uptime - ${bot.user.username}`);
     embed.setFooter("Cerium v." + config.ver);
     embed.setColor(config.embedcolor);
     if (hours == 1 && uptimeMinutes == 1) {

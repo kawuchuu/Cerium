@@ -15,8 +15,8 @@ module.exports.run = async (bot, message, args, Discord) => {
         if(!message.member.voiceChannel) return message.channel.send("**Error:** Please join a voice channel.");
         if(!msg) return message.channel.send("**Error:** Please add a YouTube link or search query.");
         if(!music.servers[message.guild.id]) music.servers[message.guild.id] = { queue: [] };
-        
-        if(message.guild.members.get(bot.user.id).serverMute == true) { 
+
+        if(message.guild.members.get(bot.user.id).serverMute == true) {
             if (!message.guild.voiceConnection) message.member.voiceChannel.join();
             return message.channel.send("I'm currently muted. Please unmute me before playing.");
         }
@@ -41,10 +41,10 @@ module.exports.run = async (bot, message, args, Discord) => {
                         }
                     }
                 }
-                
+
                 server.queue.push(video.link);
                 embed = new Discord.RichEmbed();
-                embed.setAuthor(bot.user.username + " Music Player", "https://i.imgur.com/mvwmS9z.png");
+                embed.setAuthor(`Music - ${bot.user.username}`, "https://i.imgur.com/mvwmS9z.png");
                 embed.setFooter("Cerium v." + config.ver);
                 embed.setColor(config.embedcolor);
                 embed.setDescription("Added to queue...");
@@ -59,7 +59,7 @@ module.exports.run = async (bot, message, args, Discord) => {
             message.channel.send("**Error:** Failed to recieve video information.");
             console.error(error);
         }
-    
+
         try {
         if(!message.guild.voiceConnection) {
             message.member.voiceChannel.join().then(function(connection) {
@@ -88,15 +88,15 @@ module.exports.run = async (bot, message, args, Discord) => {
             try { if (message.guild.voiceConnection) {
                     message.channel.send("Left the voice channel.");
                     message.guild.voiceConnection.disconnect();
-                } 
+                }
             } catch(err) { null }
         break;
 
         case "skip":
-            var server = music.servers[message.guild.id];    
+            var server = music.servers[message.guild.id];
             if (server.dispatcher) server.dispatcher.end();
             message.channel.send("Skipped the song.");
-        break;   
+        break;
     }
 }
 

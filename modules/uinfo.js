@@ -7,7 +7,7 @@ module.exports.run = async (bot, message, args, Discord) => {
         var findm = msg;
     } else {
         var findm = message.author.id;
-    } 
+    }
     var member = message.guild.members.get(findm);
     var statusd = member.user.presence.status;
     if (statusd == "online") {
@@ -23,24 +23,24 @@ module.exports.run = async (bot, message, args, Discord) => {
     }
     embed = new Discord.RichEmbed("userinfo");
     embed.setColor(config.embedcolor);
-    embed.setFooter("Cerium v." + config.ver);   
+    embed.setFooter("Cerium v." + config.ver);
     try {
-        embed.setAuthor("User Information for " + member.user.username);
+        embed.setAuthor(`${member.user.tag} Information - ${bot.user.username}`);
         if (member.user.bot) {
-            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Account Type:** Bot Account", true);
+            embed.addField("Identity", "**User ID** - " + member.user.id + "\n**Discriminator** - " + member.user.discriminator + "\n**Account Type** - Bot Account", true);
         } else {
-            embed.addField("Identity:", "**User ID:** " + member.user.id + "\n**Discriminator:** " + member.user.discriminator + "\n**Account Type:** User Account", true);                    
+            embed.addField("Identity", "**User ID** - " + member.user.id + "\n**Discriminator** - " + member.user.discriminator + "\n**Account Type** - User Account", true);
         }
         if (member.nickname == null) {
-            embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** None", true);
+            embed.addField("Names", "**Username** - " + member.user.username + "\n**Nickname** - None", true);
         } else {
-            embed.addField("Names:", "**Username:** " + member.user.username + "\n**Nickname:** " + member.nickname, true);
+            embed.addField("Names", "**Username** - " + member.user.username + "\n**Nickname** - " + member.nickname, true);
         }
-        embed.addField("Dates:", "**User Created:** " + member.user.createdAt.toUTCString() + "\n**User Joined:** " + member.joinedAt.toUTCString());
+        embed.addField("Dates", "**User Created** - " + member.user.createdAt.toUTCString() + "\n**User Joined** - " + member.joinedAt.toUTCString());
         try {
-            embed.addField("Display:", "**Status:** " + statusd + "\n**Currently playing:** " + member.user.presence.game.name);
+            embed.addField("Display", "**Status** - " + statusd + "\n**Currently playing** - " + member.user.presence.game.name);
         } catch(error) {
-            embed.addField("Display:", "**Status:** " + statusd);
+            embed.addField("Display", "**Status** - " + statusd);
         }
         embed.setThumbnail(member.user.displayAvatarURL);
         message.channel.send({embed: embed});

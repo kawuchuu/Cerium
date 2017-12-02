@@ -1,18 +1,14 @@
 module.exports.run = async (bot, message, args, Discord, config, cver) => {
     var config = require('../config.json');
     embed = new Discord.RichEmbed("about");
-    embed.setAuthor("Cerium v." + config.ver + " by projsh_");
+    embed.setAuthor("About - Cerium");
+    embed.setThumbnail(bot.user.displayAvatarURL)
     embed.setColor(config.embedcolor);
-    embed.setDescription("A fun little Discord bot. Cerium is licenced under the GNU General Public Licence (v.3.0)");
-    embed.addField("Current Account:", bot.user.username, true);
-    embed.addField("Total guilds:", bot.guilds.size + " guilds", true);
-    embed.addField("Git:", "https://github.com/projsh/Cerium", true);
-    embed.addField("License:", "https://github.com/projsh/Cerium/blob/master/LICENSE", true);
-    embed.addField("Report bugs:", "https://github.com/projsh/Cerium/issues", true);
-    embed.addField("Dependencies:", "`discord.js\nopusscript\nytdl-core\nchalk\nyoutube-search`", true);
-    embed.addField("Programs:", "Node.JS (v.8.0 or higher)\nAny terminal/console client\nFFmpeg (required for music commands)", true);
-    embed.setFooter("Current guild: " + message.guild.name);
-    embed.setThumbnail(bot.user.displayAvatarURL);
+    embed.addField("General Information","Cerium is a Discord bot created by Joshua Walker (projsh_)\nIt's a free & open-source project available on GitHub.", true);
+    embed.addField("Bot Information", `**Version** - v.${config.ver}\n**Account** - ${bot.user.tag}\n**Library** - [discord.js](https://discord.js.org)\n**Runtime** - [Node.js](https://nodejs.org)`, true);
+    embed.addField("Links", "[GitHub Repo](https://www.github.com/projsh/Cerium)\n[Report Bugs](https://www.github.com/projsh/Cerium/issues)\n[README File](https://github.com/projsh/Cerium/blob/master/README.md)\n[License](https://www.github.com/projsh/Cerium/blob/master/LICENSE)", true);
+
+    embed.setFooter("<> with <3 by projsh_");
     message.channel.send({embed: embed});
 }
 module.exports.help = {

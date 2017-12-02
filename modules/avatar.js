@@ -6,13 +6,13 @@ module.exports.run = async (bot, message, args, Discord) => {
     embed.setFooter("Cerium v." + config.ver);
     if (!msg) {
         embed.setImage(message.author.displayAvatarURL);
-        embed.setAuthor(message.author.username + "'s Avatar");
+        embed.setAuthor(`${message.author.username}'s Avatar - ${bot.user.username}`);
         message.channel.send({embed: embed});
     } else {
         try {
             var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
             var member = message.guild.members.get(findm);
-            embed.setAuthor(member.user.username + "'s Avatar");
+            embed.setAuthor(`${message.author.username}'s Avatar - ${bot.user.username}`);
             embed.setImage(member.user.displayAvatarURL);
             message.channel.send({embed: embed});
         } catch(error) {

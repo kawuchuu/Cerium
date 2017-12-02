@@ -26,15 +26,15 @@ module.exports.run = async (bot, message, args, Discord) => {
         if (typeof evaled !== "string") {
             evaled = require("util").inspect(evaled);
         }
-        embed.setAuthor("Eval Result");
-        embed.addField(":inbox_tray: Input:", "```js\n" + msg + "```");
-        embed.addField(":outbox_tray: Output:", "```js\n" + clean(evaled) + "```");
+        embed.setAuthor(`Eval Result - ${bot.user.username}`);
+        embed.addField(":arrow_down_small: Input", "```js\n" + msg + "```");
+        embed.addField(":arrow_up_small: Output", "```js\n" + clean(evaled) + "```");
         message.channel.send({embed: embed});
     } catch(error) {
-        embed.setAuthor("Eval Error");
-        embed.addField(":no_entry_sign: Error:", "```js\n" + error + "```");
-        embed.addField(":inbox_tray: Input:", "```js\n" + msg + "```");
-        embed.addField(":outbox_tray: Output:", "```js\n" + clean(evaled) + "```");
+        embed.setAuthor(`Error - Eval - ${bot.user.username}`);
+        embed.addField(":no_entry_sign: Error", "```js\n" + error + "```");
+        embed.addField(":arrow_down_small: Input", "```js\n" + msg + "```");
+        embed.addField(":arrow_up_small: Output", "```js\n" + clean(evaled) + "```");
         embed.setColor("#ff3535");
         message.channel.send({embed: embed});
     }

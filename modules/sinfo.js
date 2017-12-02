@@ -1,9 +1,9 @@
 module.exports.run = async (bot, message, args, Discord) => {
-    const config = require("../config.json");    
+    const config = require("../config.json");
     embed = new Discord.RichEmbed("sinfo");
-    embed.setAuthor("Server Information");
+    embed.setAuthor(`Guild Information - ${bot.user.username}`);
     embed.setColor(config.embedcolor);
-    embed.setDescription("Information about this server.");
+    embed.setDescription("Information about this guild.");
     embed.addField("Name:", message.guild.name);
     embed.addField("Server ID:", message.guild.id);
     embed.addField("Creation Date:", message.guild.createdAt.toUTCString());
