@@ -1,5 +1,5 @@
 
-# ![alt-text](https://images-ext-2.discordapp.net/external/SP8hY16jjcczwT8zsgAgE4mbkzXH6Mq_LtpjbaM5KP0/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/300513436675080205/5859fea0c4d06c281f3ce2dc39d37136.png?width=50&height=50) Cerium
+# Cerium
 A fun little Discord bot made by Joshua Walker (projsh_)
 
 Module system by FriendsNone
@@ -34,8 +34,8 @@ This file is required. Feel free to change some settings (for example, the prefi
 | ping			  | nick			  | ship		   | play			  | poweroff		|
 | pong			  | avatar		      | flip           | skip			  | eval		    |
 | about			  | sinfo			  | ud			   | stop			  |	-				|
-| -				  | host			  | kiss		   | -				  |	-				|
-| -				  | uinfo			  | -			   | -				  |	-				|
+| -				  | host			  | -		   | pause				  |	-				|
+| -				  | uinfo			  | -			   | resume				  |	-				|
 
 # How to install
 Here's how you can install and run Cerium on your Discord Servers.
