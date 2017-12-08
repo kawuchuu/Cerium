@@ -16,11 +16,6 @@ module.exports.run = async (bot, message, args, Discord) => {
         if(!msg) return message.channel.send("**Error:** Please add a YouTube link or search query.");
         if(!music.servers[message.guild.id]) music.servers[message.guild.id] = { queue: [] };
 
-        if(message.guild.members.get(bot.user.id).serverMute == true) {
-            if (!message.guild.voiceConnection) message.member.voiceChannel.join();
-            return message.channel.send("I'm currently muted. Please unmute me before playing.");
-        }
-
         var server = music.servers[message.guild.id];
         try {
             if (args[0].startsWith("https://www.youtube.com/watch?v=") && args[0].startsWith("https://youtu.be/")) {
