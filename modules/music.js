@@ -48,6 +48,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                 embed.addField("Channel:", video.channelTitle);
                 embed.setThumbnail(video.thumbnails.default.url)
                 message.channel.send({embed: embed});
+                //console.log(chalk.green(`[i] Video Requested: ${chalk.cyan(video.title)} - Guild: ${chalk.cyan(message.guild.name)}`));
             });
         }
         } catch(error) {

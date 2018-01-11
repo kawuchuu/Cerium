@@ -1,5 +1,5 @@
 module.exports.run = async (bot, message, args, Discord) => {
-    const config = require("../config.json");
+    const config = require('../config.json');
     var msg = message.content.substr(config.prefix.length + 6);
     if (msg.includes("@")){
         var findm = msg.replace("<", "").replace(">", "").replace("@", "").replace("!", "").replace(/[^0-9.]/g, "");
@@ -21,32 +21,20 @@ module.exports.run = async (bot, message, args, Discord) => {
     } else {
         statusd == "Unknown";
     }
-    embed = new Discord.RichEmbed("userinfo");
-    embed.setColor(config.embedcolor);
-    embed.setFooter("Cerium v." + config.ver);
-    try {
-        embed.setAuthor(`${member.user.tag} Information - ${bot.user.username}`);
-        if (member.user.bot) {
-            embed.addField("Identity", "**User ID** - " + member.user.id + "\n**Discriminator** - " + member.user.discriminator + "\n**Account Type** - Bot Account", true);
-        } else {
-            embed.addField("Identity", "**User ID** - " + member.user.id + "\n**Discriminator** - " + member.user.discriminator + "\n**Account Type** - User Account", true);
-        }
-        if (member.nickname == null) {
-            embed.addField("Names", "**Username** - " + member.user.username + "\n**Nickname** - None", true);
-        } else {
-            embed.addField("Names", "**Username** - " + member.user.username + "\n**Nickname** - " + member.nickname, true);
-        }
-        embed.addField("Dates", "**User Created** - " + member.user.createdAt.toUTCString() + "\n**User Joined** - " + member.joinedAt.toUTCString());
-        try {
-            embed.addField("Display", "**Status** - " + statusd + "\n**Currently playing** - " + member.user.presence.game.name);
-        } catch(error) {
-            embed.addField("Display", "**Status** - " + statusd);
-        }
-        embed.setThumbnail(member.user.displayAvatarURL);
-        message.channel.send({embed: embed});
-    } catch(error) {
-        message.channel.send("**Error:** Failed to recieve information.");
-    }
+    var accType = 'Unknown';
+    var nick = member.nickname;
+    if(member.user.bot){accType = 'Bot'} else {accType = 'User'}
+    if(member.nickname == null){nick = 'None';}
+    let embed = new Discord.RichEmbed()
+      .setColor(config.embedcolor)
+      .setAuthor(`${member.user.username}'s User Information - ${bot.user.username}`)
+      .setThumbnail(member.user.displayAvatarURL)
+      .setFooter(`Cerium v.${config.ver}`)
+      .addField('Identity',`**User ID** - ${member.user.id}\n**Discriminator** - ${member.user.discriminator}\n**Type** - ${accType}`, true)
+      .addField('Names', `**Username** - ${member.user.username}\n**Nickname** - ${nick}`, true)
+      .addField('Dates', `**Joined** - ${member.joinedAt.toUTCString()}\n**Created** - ${member.user.createdAt.toUTCString()}`)
+      .addField('Display', `**Status** - ${statusd}\n**Playing** - ${member.user.presence.game.name}`);
+    message.channel.send({embed});
 }
 module.exports.help = {
     name: "uinfo",

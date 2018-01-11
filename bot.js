@@ -1,7 +1,7 @@
 /***************************************
  *
  * Cerium -  A fun little Discord bot.
- * Copyright (C) 2017 Joshua Walker.
+ * Copyright (C) 2018 Joshua Walker.
  * This software is under the terms of the GNU General Public Licence (v.3.0).
  *
  * You should have recieved a copy of this licence along with this bot.
@@ -13,198 +13,98 @@
  * *************************************/
 
 const Discord = require("discord.js");
-const config = require("./config.json")
+const config = require("./config.json");
 const ytdl = require("ytdl-core");
 const chalk = require("chalk");
 const fs = require("fs");
-const blessed = require("blessed");
+const readline = require('readline');
 const bot = new Discord.Client();
-const cver = config.ver;
 
-var leave = false;
-var playerr = false;
-var guildspeak = null;
-var channspeak = null;
 bot.commands = new Discord.Collection();
 
-//console
-var screen = blessed.screen({
-    smartCSR: true,
-    dockBorders: true
-});
-screen.title = "Cerium " + cver;
-
-var titleBar = blessed.text({
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "1",
-    content: "Cerium Console [v." + cver + "]",
-    tags: true,
-    style: {
-        fg: "black",
-        bg: "white"
-    },
-    padding: {
-        left: 1
-    }
-});
-screen.append(titleBar);
-
-var logBox = blessed.log({
-    top: 1,
-    left: 0,
-    width: "100%",
-    height: "100%-4",
-    tags: true,
-    style: {
-        fg: 'white',
-        bg: 'black',
-        scrollbar: {
-            bg: 'white'
-        }
-    },
-    padding: {
-        left: 1
-    },
-    scrollable: true,
-    alwaysScroll: true,
-    scrollOnInput: true,
-    scrollbar: true
-});
-screen.append(logBox);
-
-var bottomBar = blessed.box({
-    top: "100%-1",
-    left: "0",
-    width: "100%",
-    height: 1,
-    content: "^C EXIT   ^G HELP",
-    tags: true,
-    style: {
-        fg: "black",
-        bg: "white"
-    },
-    padding: {
-        left: 1
-    }
-});
-screen.append(bottomBar);
-
-var box = blessed.box({
-    top: 'center',
-    left: 'center',
-    width: '50%',
-    height: '50%',
-    tags: true,
-    border: {
-      type: 'line'
-    },
-    style: {
-      fg: 'black',
-      bg: 'white',
-      border: {
-        fg: 'white'
-      }
-    }
-});
-box.hide();
-screen.append(box);
-
-screen.render();
-
-logBox.on("click", function (mouse) {
-    while (line.indexOf("\x1b") != -1) {
-        var removeStart = line.indexOf("\x1b");
-        var removeEnd = line.indexOf("m", removeStart);
-        line = line.replace(line.slice(removeStart, removeEnd + 1), "");
-    }
-
-    var previousSpace = line.lastIndexOf(" ", x - 2);
-    var nextSpace = line.indexOf(" ", x - 2);
-
-    previousSpace++;
-
-    if (nextSpace == -1) {
-        nextSpace = line.length;
-    }
-    var word = line.substring(previousSpace, nextSpace);
-
-    if (word.startsWith("[")) word = word.substr(1);
-    if (word.endsWith("]")) word = word.substr(0, word.length - 2);
-
-    var goUpwards = false;
-    var top = y + 1;
-    if (top + 7 > screen.height) {
-        top = y - 7;
-        goUpwards = true;
-    }
-
-    var left = x - 10;
-    if (left + 50 > screen.width) {
-        left = screen.width - 50;
-    } else if (left < 0) {
-        left = 0;
-    }
-});
-
-screen.key("up", function() {
-    logBox.scroll(-1);
-    screen.render();
-});
-
-screen.key("pageup", function() {
-    logBox.scroll(-logBox.height);
-    screen.render();
-});
-
-screen.key("down", function() {
-    logBox.scroll(1);
-    screen.render();
-});
-
-screen.key("pagedown", function() {
-    logBox.scroll(logBox.height);
-    screen.render();
-});
-screen.key("C-c", function() {
-    process.exit();
-});
-screen.key('C-g', function() {
-    box.setContent("{center}-===========-\nCERIUM HELP\n-===========-\nNOTE: This is Cerium's console help. For help with bot commands, type in " + config.prefix + "help on a server with Cerium." +
-    "\n \n• This is Cerium's console. At this current time, it's a place to keep track on what Cerium's up to.\n• Currently, there isn't a whole lot to talk about. This help box will contain more information later in the future. Press enter to close this box.");
-    box.show();
-    screen.render();
-});
-screen.key("enter", function() {
-    box.hide();
-    screen.render();
+//readline
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: '> '
 });
 
 //ready
 bot.on('ready', () => {
-    logBox.log(chalk.green("[i] Successfully logged into:", chalk.cyan(bot.user.username)));
-    logBox.log(chalk.green("[i] Welcome to Cerium " + chalk.cyan("v." + cver) + "\n[i] Current prefix is:", chalk.cyan(config.prefix)));
+    console.log(chalk.green("   [i] Successfully logged into:", chalk.cyan(bot.user.username)));
+    console.log(chalk.green("   [i] Welcome to Cerium " + chalk.cyan("v." + config.ver) + "\n   [i] Current prefix is:", chalk.cyan(config.prefix)));
+    if(config.beta) {
+      console.log(chalk.yellow('   [!] This version of Cerium is currently in beta.'));
+    }
     bot.setInterval(setGame, 300000);
     setGame();
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
-        logBox.log(chalk.yellow("[!] Embed colour is invalid."));
+        console.log(chalk.yellow("   [!] Embed colour is invalid."));
     }
     if (config.prefix.length == 0) {
-        logBox.log(chalk.yellow("[!] Cannot find a valid prefix in config.json."));
+        console.log(chalk.yellow("   [!] Cannot find a valid prefix in config.json."));
     }
     if (config.hostid.length == 0) {
-        logBox.log(chalk.red("[X] Cannot find the host's user ID in config.json. Cannot continue operation."));
+        console.log(chalk.red("   [X] Cannot find the host's user ID in config.json. Cannot continue operation."));
         process.exit;
     }
+    rl.prompt();
+    bot.on('guildCreate', guild => {
+        console.log(chalk.green(`[i] Guild Added: ${chalk.cyan(guild.name)} - ${chalk.cyan('ID:')} ${chalk.green(guild.id)} - ${chalk.cyan('OWNER:')} ${chalk.green(guild.owner.user.tag)}`));
+        rl.prompt();
+    });
+    bot.on('guildDelete', guild => {
+        console.log(chalk.green(`[i] Guild Removed: ${chalk.cyan(guild.name)} - ${chalk.cyan('ID:')} ${chalk.green(guild.id)} - ${chalk.cyan('OWNER:')} ${chalk.green(guild.owner.user.tag)}`));
+        rl.prompt();
+    });
 });
 
-bot.on("guildMemberAdd", member => {
-    if (member.guild.id == 336487228228370432) {
-        return;
-    } else {
-        member.send("'" + member.guild.name + "' contains bots that collect user information. If you do not agree, **your only recourse is to leave the server.**");
+rl.on('line', function(cmd){
+    var args = cmd.split(" ");
+    switch(args[0]) {
+        case "guilds":
+            if (bot.guilds.size === 0) {
+                console.log(chalk.yellow('   [!] No guilds found.'));
+            } else {
+                for ([id, guild] of bot.guilds) {
+                    console.log(`   ${chalk.cyan(guild.name)} - ${chalk.cyan('ID:')} ${chalk.green(guild.id)} - ${chalk.cyan('OWNER:')} ${chalk.green(guild.owner.user.tag)}`);
+                }
+            }
+            break;
+        case "gmembers":
+            if (!args[1]) {
+                console.log(chalk.yellow('   [!] Please insert the guild\'s ID.'));
+            } else {
+                try {
+                    var guild = bot.guilds.get(args[1]);
+                    for ([id, member] of guild.members) {
+                        var usr = `   ${chalk.cyan(member.user.tag)} - ${chalk.green(member.user.id)}`;
+                        if (member.user.bot) {
+                            usr = `   ${chalk.cyan(member.user.tag)} [BOT] - ${chalk.green(member.user.id)}`
+                        }
+                        console.log(usr);
+                    }
+                } catch(err) {
+                    console.log(chalk.red('   [X] That guild cannot be found.'));
+                }
+            }
+            break;
+        case "leave":
+            var guild = bot.guilds.get(args[1]);
+            guild.leave();
     }
+    rl.prompt();
+});
+
+rl.on('SIGINT', function() {
+    rl.question(chalk.cyan('   [?] Are you sure you want to exit? (y/n)'), function(answer) {
+        if (answer.match(/^y(es)?$/i)) {
+            process.exit(1);
+        } else {
+            rl.resume();
+            rl.prompt();
+        }
+    });
 });
 
 //playing status
@@ -220,41 +120,38 @@ function setGame() {
             presence.game.name = "Need help? | " + config.prefix + "help";
             break;
         case 1:
-            presence.game.name = "v." + cver;
+            presence.game.name = "v." + config.ver;
     }
     bot.user.setPresence(presence);
 }
 
 //modules loader
 fs.readdir("./modules/", (err, files) => {
-    if (err) logBox.log(chalk.red("[X] " + err));
+    if (err) console.log(chalk.red("   [X] " + err));
 
     let modules = files.filter(f => f.split(".").pop() === "js");
     if (modules.length <= 0) {
-        logBox.log(chalk.yellow("[M] No modules were found. Continuing without modules..."));
+        console.log(chalk.yellow("   [M] No modules were found. Continuing without modules..."));
         return;
     }
 
-    logBox.log(chalk.cyan("[M] Loading " + modules.length + " modules..."));
+    console.log(chalk.cyan("   [M] Loading " + modules.length + " modules..."));
     modules.forEach((f, i) => {
         try {
         let props = require(`./modules/${f}`);
             bot.commands.set(props.help.name, props);
         } catch (err) {
-            logBox.log(chalk.red("[X] There is a problem with one of your modules. \n=> " + err));
+            console.log(chalk.red("   [X] There is a problem with one of your modules. \n=> " + err));
             process.exit(1)
         }
-    })
-
-    logBox.log(chalk.cyan("[M] Loaded " + modules.length + " modules successfully."));
-})
+    });
+    console.log(chalk.cyan("   [M] Loaded " + modules.length + " modules successfully."));
+});
 
 //login
 bot.login(config.token).catch(function() {
-    logBox.log(chalk.red("[X] Failed to login. Press enter or ^C to exit."));
-    screen.key("enter", function () {
-        process.exit();
-    });
+    console.log(chalk.red("   [X] Failed to login."));
+    rl.prompt();
 });
 
 //command handler
@@ -271,6 +168,6 @@ bot.on("message", async message => {
     let cmd = bot.commands.get(command.slice(config.prefix.length))
 
     if (cmd) {
-        cmd.run(bot, message, args, Discord, config, logBox);
+        cmd.run(bot, message, args, Discord, config);
     }
 });
