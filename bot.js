@@ -90,8 +90,13 @@ rl.on('line', function(cmd){
             }
             break;
         case "leave":
-            var guild = bot.guilds.get(args[1]);
-            guild.leave();
+            if (!args[1]) {
+                console.log(chalk.yellow('   [!] Please insert the guild\'s ID.'));
+            } else {
+                var guild = bot.guilds.get(args[1]);
+                guild.leave();
+            }
+            break;
     }
     rl.prompt();
 });
