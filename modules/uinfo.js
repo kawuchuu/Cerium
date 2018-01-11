@@ -25,16 +25,20 @@ module.exports.run = async (bot, message, args, Discord) => {
     var nick = member.nickname;
     if(member.user.bot){accType = 'Bot'} else {accType = 'User'}
     if(member.nickname == null){nick = 'None';}
-    let embed = new Discord.RichEmbed()
-      .setColor(config.embedcolor)
-      .setAuthor(`${member.user.username}'s User Information - ${bot.user.username}`)
-      .setThumbnail(member.user.displayAvatarURL)
-      .setFooter(`Cerium v.${config.ver}`)
-      .addField('Identity',`**User ID** - ${member.user.id}\n**Discriminator** - ${member.user.discriminator}\n**Type** - ${accType}`, true)
-      .addField('Names', `**Username** - ${member.user.username}\n**Nickname** - ${nick}`, true)
-      .addField('Dates', `**Joined** - ${member.joinedAt.toUTCString()}\n**Created** - ${member.user.createdAt.toUTCString()}`)
-      .addField('Display', `**Status** - ${statusd}\n**Playing** - ${member.user.presence.game.name}`);
-    message.channel.send({embed});
+    embed = new Discord.RichEmbed()
+        embed.setColor(config.embedcolor)
+        embed.setAuthor(`${member.user.username}'s User Information - ${bot.user.username}`)
+        embed.setThumbnail(member.user.displayAvatarURL)
+        embed.setFooter(`Cerium v.${config.ver}`)
+        embed.addField('Identity',`**User ID** - ${member.user.id}\n**Discriminator** - ${member.user.discriminator}\n**Type** - ${accType}`, true)
+        embed.addField('Names', `**Username** - ${member.user.username}\n**Nickname** - ${nick}`, true)
+        embed.addField('Dates', `**Joined** - ${member.joinedAt.toUTCString()}\n**Created** - ${member.user.createdAt.toUTCString()}`)
+        try {
+            embed.addField('Display', `**Status** - ${statusd}\n**Playing:** ${member.user.presence.game.name}`);
+        } catch(err) {
+            embed.addField('Display', `**Status** - ${statusd}`);            
+        }
+        message.channel.send({embed: embed});
 }
 module.exports.help = {
     name: "uinfo",
