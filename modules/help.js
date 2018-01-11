@@ -6,10 +6,9 @@ module.exports.run = async (bot, message, args) => {
         embed = new Discord.RichEmbed()
             embed.setAuthor(`Help - ${bot.user.username}`, bot.user.displayAvatarURL);
             embed.setDescription("For more information, type in `" + config.prefix + "help [command]`");
-            embed.addField("Core Commands", "ping\nabout\nmusic", true);
-            embed.addField("Normal Commands", "nick\navatar\nsinfo\nhost\nuinfo", true);
-            embed.addField("Fun Commands", "ship\nflip\nud", true);
-            embed.addField("Host Commands", "poweroff\neval", true);
+            embed.addField("Information Commands", "about\nhelp\nhost\nrtime\nsinfo\nuinfo\nuptime", true);
+            embed.addField("Music Commands", "**Usage:** `" + config.prefix + "music [command]`\nplay\nskip\nstop\npause\nresume", true);
+            embed.addField("Miscellaneous Commands", "avatar\nflip\nnick\nping\nship", true);
             embed.setColor(config.embedcolor);
             embed.setFooter("Cerium v." + config.ver);
         message.channel.send({embed: embed});

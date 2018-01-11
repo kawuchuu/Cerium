@@ -34,7 +34,7 @@ module.exports.run = async (bot, message, args, Discord) => {
         embed.addField('Names', `**Username** - ${member.user.username}\n**Nickname** - ${nick}`, true)
         embed.addField('Dates', `**Joined** - ${member.joinedAt.toUTCString()}\n**Created** - ${member.user.createdAt.toUTCString()}`)
         try {
-            embed.addField('Display', `**Status** - ${statusd}\n**Playing:** ${member.user.presence.game.name}`);
+            embed.addField('Display', `**Status** - ${statusd}\n**Playing** - ${member.user.presence.game.name}`);
         } catch(err) {
             embed.addField('Display', `**Status** - ${statusd}`);            
         }
