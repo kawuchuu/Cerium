@@ -4,9 +4,11 @@ A fun little Discord bot made by Joshua Walker (projsh_)
 
 Module system by FriendsNone
 
+[Cerium info page](https://projsh.github.io/cerium)
+
 # Dependencies
 - **Packages**
-    - `discord.js`
+    - `discord.js (v.11.3.0 or higher)`
     - `opusscript`
     - `ytdl-core`
     - `chalk`
@@ -21,21 +23,13 @@ This file is required. Feel free to change some settings (for example, the prefi
 ```json
 {
     "token": "Your bot's token goes here",
-    "prefix": "!",
+    "prefix": "c!",
     "embedcolor": "#4976D2",
     "hostid": "Your Discord User ID goes here",
-    "ver": "2.2",
+    "ver": "2.4",
     "ytskey": "Your YouTube Data API Key goes here (required for search functionality)"
 }
 ```
-# Commands Included
-|  Core Commands  |  Normal Commands  |  Fun Commands  |  Music Commands  |  Host Commands  |
-|:---------------:|:-----------------:|:--------------:|:----------------:|:---------------:|
-| ping			  | nick			  | ship		   | play			  | poweroff		|
-| pong			  | avatar		      | flip           | skip			  | eval		    |
-| about			  | sinfo			  | ud			   | stop			  |	-				|
-| -				  | host			  | -		   | pause				  |	-				|
-| -				  | uinfo			  | -			   | resume				  |	-				|
 
 # How to install
 Here's how you can install and run Cerium on your Discord Servers.

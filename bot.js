@@ -36,8 +36,7 @@ bot.on('ready', () => {
     if(config.beta) {
       console.log(chalk.yellow('   [!] This version of Cerium is currently in beta.'));
     }
-    bot.setInterval(setGame, 300000);
-    setGame();
+    bot.user.setActivity(`${config.prefix}help | v.${config.ver}`, { type: "LISTENING" });
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
         console.log(chalk.yellow("   [!] Embed colour is invalid."));
     }
@@ -97,6 +96,40 @@ rl.on('line', function(cmd){
                 guild.leave();
             }
             break;
+        case "setpresence":
+            if (!args[1]){
+                console.log(chalk.yellow("   [!] Please enter a message to display"));
+            } else {
+                if (args[1] === "playing" || args[1] === "streaming" || args[1] === "listening" || args[1] === "watching") {
+                    var ptype = args[1];
+                    var msg = cmd.substr(13 + args[1].length);
+                } else {
+                    var ptype = "playing";
+                    var msg = cmd.substr(12);
+                }
+                if (args[1] === "default" || args[1] === "reset") {
+                    bot.user.setActivity(`${config.prefix}help | v.${config.ver}`, { type: "LISTENING" });
+                    console.log(chalk.green(`   [i] Set presence to the default message.`));
+                } else {
+                    bot.user.setActivity(msg, { type: ptype });
+                    console.log(chalk.green(`   [i] Set presence type to '${chalk.cyan(ptype)}' and message to ${chalk.cyan(msg)}.`));
+                }
+            }
+            break;
+        case "exit":
+            rl.question(chalk.cyan('   [?] Are you sure you want to exit? (y/n)'), function(answer) {
+                if (answer.match(/^y(es)?$/i)) {
+                    process.exit(0);
+                } else {
+                    rl.prompt();
+                }
+            });
+            break;
+        case "help":
+            var msg = chalk.green(`   ${chalk.cyan('Cerium Console Help')}\n   ===================`);
+            msg += chalk.green(`\n   ${chalk.cyan('guilds')} - Display all available guilds.\n   ${chalk.cyan('gmembers [guild id]')} - Display all members in a guild.`);
+            msg += chalk.green(`\n   ${chalk.cyan('leave [guild id]')} - Leaves a guild.\n   ${chalk.cyan('setpresence [presence] [message]')} - Sets Cerium's presence.\n   ${chalk.cyan('exit')} - Exits Cerium.`);
+            console.log(msg)
     }
     rl.prompt();
 });
@@ -104,31 +137,13 @@ rl.on('line', function(cmd){
 rl.on('SIGINT', function() {
     rl.question(chalk.cyan('   [?] Are you sure you want to exit? (y/n)'), function(answer) {
         if (answer.match(/^y(es)?$/i)) {
-            process.exit(1);
+            process.exit(0);
         } else {
             rl.resume();
             rl.prompt();
         }
     });
 });
-
-//playing status
-function setGame() {
-    var presence = {};
-    presence.game = {};
-    presence.game.type = 0;
-    presence.status = "online";
-    presence.afk = false;
-
-    switch (Math.floor(Math.random() * 1000) % 2) {
-        case 0:
-            presence.game.name = "Need help? | " + config.prefix + "help";
-            break;
-        case 1:
-            presence.game.name = "v." + config.ver;
-    }
-    bot.user.setPresence(presence);
-}
 
 //modules loader
 fs.readdir("./modules/", (err, files) => {
