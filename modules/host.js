@@ -1,4 +1,5 @@
-module.exports.run = async (bot, message, args, Discord, config, cver) => {
+module.exports.run = async (bot, message, args, Discord) => {
+    const config = require('../config.json');
     var time;
     var uptime = parseInt(bot.uptime);
     uptime = Math.floor(uptime / 1000);
@@ -13,13 +14,18 @@ module.exports.run = async (bot, message, args, Discord, config, cver) => {
         time = hours + ":0" + uptimeMinutes
     } else {
         time = hours + ":" + uptimeMinutes
-    }      
+    }   
     var os = require("os");
+    if (message.author.id === config.hostid) {   
+        var identity = "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)";
+    } else {
+        var identity = "";
+    }
     embed = new Discord.RichEmbed("host");
     embed.setColor(config.embedcolor);
     embed.setAuthor("Host Stats - " + bot.user.username, bot.user.displayAvatarURL);
-    embed.addField("Uptime & Response Time:", "Uptime: " + time + "\nResponse Time: " + Math.round(bot.ping), true);
-    embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + "\nIdentity: " + os.userInfo().username + " (Username) | " + os.hostname() + " (Hostname)", true);
+    embed.addField("Uptime & Response Time:", "Uptime: " + time + "\nResponse Time: " + Math.round(bot.ping));
+    embed.addField("System:", "OS: " + process.platform + " (" + os.type() + ") " + process.arch + "\nFramework: " + process.release.name + " " + process.version + identity);
     embed.setFooter("Cerium v." + config.ver);
     message.channel.send({embed: embed});
 }
