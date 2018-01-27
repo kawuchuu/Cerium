@@ -5,12 +5,14 @@ const bot = new Discord.Client;
 
 function play(connection, message) {
     var server = servers[message.guild.id];
+    var servertitle = stitle[message.guild.id];
     try {
     server.dispatcher = connection.playStream(ytdl(server.queue[0], {
         filter: "audioonly"
     }))
 
     server.queue.shift();
+    servertitle.qtitle.shift();
     server.dispatcher.on("end", function() {
         if (server.queue[0]) { 
             play(connection, message);
@@ -31,6 +33,8 @@ function play(connection, message) {
 }
 
 var servers = {};
+var stitle = {};
 
 exports.play = play
 exports.servers = servers
+exports.stitle = stitle
