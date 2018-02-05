@@ -3,6 +3,7 @@ module.exports.run = async (bot, message, args, Discord) => {
     const ytdl = require('ytdl-core');
     const search = require('youtube-search');
     const music = require('../player.js');
+    const chalk = require('chalk');
 
     var opts = {
         maxResults: 3,
@@ -11,19 +12,22 @@ module.exports.run = async (bot, message, args, Discord) => {
 
     switch(args[0]) {
         case "play":
+        //if(!message.guild.members.get(bot.user.id).hasPermission('CONNECT')) return message.channel.send('I don\'t have permission to join this voice channel.');
         var msg = message.content.substr(config.prefix.length + 11);
         if(!message.member.voiceChannel) return message.channel.send("**Error:** Please join a voice channel.");
         if(!msg) return message.channel.send("**Error:** Please add a YouTube link or search query.");
         if(!music.servers[message.guild.id]) music.servers[message.guild.id] = { queue: [] };
+        if(!music.stitle[message.guild.id]) music.stitle[message.guild.id] = { qtitle: [] };
 
         var server = music.servers[message.guild.id];
+        var servertitle = music.stitle[message.guild.id];
         try {
             if (args[0].startsWith("https://www.youtube.com/watch?v=") && args[0].startsWith("https://youtu.be/")) {
                 var video = args[0];
         } else {
             search(msg, opts, function(err, results) {
                 if(err) {
-                    return message.channel.send("**Error:** Failed to recieve search results.");
+                    return message.channel.send("**Error:** Failed to recieve search results. Details:\n=> `" + err + "`");
                 }
                 var video = results[0];
                 console.log(chalk.green(` [i] Video Requested: ${chalk.cyan(video.title)} - Guild: ${chalk.cyan(message.guild.name)} - By User: ${chalk.cyan(message.author.tag)}`));
@@ -39,6 +43,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                 }
 
                 server.queue.push(video.link);
+                servertitle.qtitle.push(video.title + "\n*Requested by: `" + message.author.tag + "`*\n ");
                 embed = new Discord.RichEmbed();
                 embed.setAuthor(`Music - ${bot.user.username}`, "https://i.imgur.com/mvwmS9z.png");
                 embed.setFooter("Cerium v." + config.ver);
@@ -49,7 +54,6 @@ module.exports.run = async (bot, message, args, Discord) => {
                 embed.addField("Channel:", video.channelTitle);
                 embed.setThumbnail(video.thumbnails.default.url)
                 message.channel.send({embed: embed});
-                //console.log(chalk.green(`[i] Video Requested: ${chalk.cyan(video.title)} - Guild: ${chalk.cyan(message.guild.name)}`));
             });
         }
         } catch(error) {
@@ -94,6 +98,29 @@ module.exports.run = async (bot, message, args, Discord) => {
             if (server.dispatcher) server.dispatcher.end();
             message.channel.send("Skipped the song.");
         break;
+
+        case "queue":
+            var servertitle = music.stitle[message.guild.id];
+            var musicqueuecmd = "";
+            if (servertitle.qtitle.length < 1) {
+                musicqueuecmd = "Nothing up next.";
+            } else {
+                var queuenum = 0;
+                for ([length, servertitle] of servertitle.qtitle) {
+                    var servertitle = music.stitle[message.guild.id];
+                    var numq = queuenum + 1;
+                    musicqueuecmd += "**" + numq + ".** " + servertitle.qtitle[queuenum] + "\n";
+                    queuenum = queuenum + 1;
+                }
+            }
+            embed = new Discord.RichEmbed();
+            embed.setAuthor(`${message.guild.name} Queue - ${bot.user.username}`, message.guild.iconURL);
+            embed.setColor(config.embedcolor);
+            embed.setTimestamp();
+            embed.timestamp.substr
+            embed.setFooter(`Cerium v.${config.ver} \u2022 Created by projsh_`);
+            embed.addField("Up Next", musicqueuecmd);
+            message.channel.send({embed: embed});
     }
 }
 

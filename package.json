@@ -21,6 +21,7 @@
   "dependencies": {
     "blessed": "^0.1.81",
     "chalk": "^2.1.0",
+    "dblposter": "^1.0.3",
     "discord.js": "^11.3.0",
     "nodemon": "^1.12.1",
     "opusscript": "0.0.3",

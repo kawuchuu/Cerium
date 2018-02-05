@@ -20,6 +20,8 @@ const fs = require("fs");
 const readline = require('readline');
 const bot = new Discord.Client();
 
+global.prefix = "config.prefix";
+
 bot.commands = new Discord.Collection();
 
 //readline
@@ -29,18 +31,25 @@ const rl = readline.createInterface({
     prompt: '> '
 });
 
+//dbl
+if (!config.beta) {
+    const dbl = require("dblposter");
+    const dblposter = new dbl(config.dblkey);
+    dblposter.bind(bot);
+}
+
 //ready
 bot.on('ready', () => {
     console.log(chalk.green("   [i] Successfully logged into:", chalk.cyan(bot.user.username)));
-    console.log(chalk.green("   [i] Welcome to Cerium " + chalk.cyan("v." + config.ver) + "\n   [i] Current prefix is:", chalk.cyan(config.prefix)));
+    console.log(chalk.green("   [i] Welcome to Cerium " + chalk.cyan("v." + config.ver) + "\n   [i] Current prefix is:", chalk.cyan(prefix)));
     if(config.beta) {
       console.log(chalk.yellow('   [!] This version of Cerium is currently in beta.'));
     }
-    bot.user.setActivity(`${config.prefix}help | v.${config.ver}`, { type: "LISTENING" });
+    bot.user.setActivity(`${prefix}help | v.${config.ver}`, { type: "LISTENING" });
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
         console.log(chalk.yellow("   [!] Embed colour is invalid."));
     }
-    if (config.prefix.length == 0) {
+    if (prefix.length == 0) {
         console.log(chalk.yellow("   [!] Cannot find a valid prefix in config.json."));
     }
     if (config.hostid.length == 0) {
@@ -96,7 +105,7 @@ rl.on('line', function(cmd){
                 guild.leave();
             }
             break;
-        case "setpresence":
+        case "setgame":
             if (!args[1]){
                 console.log(chalk.yellow("   [!] Please enter a message to display"));
             } else {
@@ -108,7 +117,7 @@ rl.on('line', function(cmd){
                     var msg = cmd.substr(12);
                 }
                 if (args[1] === "default" || args[1] === "reset") {
-                    bot.user.setActivity(`${config.prefix}help | v.${config.ver}`, { type: "LISTENING" });
+                    bot.user.setActivity(`${prefix}help | v.${config.ver}`, { type: "LISTENING" });
                     console.log(chalk.green(`   [i] Set presence to the default message.`));
                 } else {
                     bot.user.setActivity(msg, { type: ptype });
@@ -128,8 +137,11 @@ rl.on('line', function(cmd){
         case "help":
             var msg = chalk.green(`   ${chalk.cyan('Cerium Console Help')}\n   ===================`);
             msg += chalk.green(`\n   ${chalk.cyan('guilds')} - Display all available guilds.\n   ${chalk.cyan('gmembers [guild id]')} - Display all members in a guild.`);
-            msg += chalk.green(`\n   ${chalk.cyan('leave [guild id]')} - Leaves a guild.\n   ${chalk.cyan('setpresence [presence] [message]')} - Sets Cerium's presence.\n   ${chalk.cyan('exit')} - Exits Cerium.`);
-            console.log(msg)
+            msg += chalk.green(`\n   ${chalk.cyan('leave [guild id]')} - Leaves a guild.\n   ${chalk.cyan('setgame [presence] [message]')} - Sets Cerium's presence.\n   ${chalk.cyan('exit')} - Exits Cerium.`);
+            console.log(msg);
+            break;
+        case "setprefix":
+            prefix = cmd.substr(7);
     }
     rl.prompt();
 });
@@ -185,14 +197,14 @@ bot.login(config.token).catch(function() {
 bot.on("message", async message => {
     if (message.author.bot) return;
     if (message.channel.type === "dm") return;
-    var msg = message.content.substr(config.prefix.length);
+    var msg = message.content.substr(prefix.length);
 
     let array = message.content.split(" ");
     let command = array[0];
     let args  = array.slice(1);
 
-    if (!command.startsWith(config.prefix)) return;
-    let cmd = bot.commands.get(command.slice(config.prefix.length))
+    if (!command.startsWith(prefix)) return;
+    let cmd = bot.commands.get(command.slice(prefix.length))
 
     if (cmd) {
         cmd.run(bot, message, args, Discord, config);
