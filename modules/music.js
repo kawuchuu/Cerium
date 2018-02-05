@@ -26,6 +26,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                     return message.channel.send("**Error:** Failed to recieve search results.");
                 }
                 var video = results[0];
+                console.log(chalk.green(` [i] Video Requested: ${chalk.cyan(video.title)} - Guild: ${chalk.cyan(message.guild.name)} - By User: ${chalk.cyan(message.author.tag)}`));
                 if(results[0].kind == 'youtube#channel') {
                     video = results[1];
                     if (results[1].kind == 'youtube#channel') {
