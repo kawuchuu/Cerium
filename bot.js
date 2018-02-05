@@ -20,7 +20,7 @@ const fs = require("fs");
 const readline = require('readline');
 const bot = new Discord.Client();
 
-global.prefix = "config.prefix";
+global.prefix = config.prefix;
 
 bot.commands = new Discord.Collection();
 
