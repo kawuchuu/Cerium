@@ -12,7 +12,7 @@ module.exports.run = async (bot, message, args, Discord) => {
 
     switch(args[0]) {
         case "play":
-        if(!message.guild.members.get(bot.user.id).hasPermission('CONNECT')) return message.channel.send('I don\'t have permission to join this voice channel.');
+        //if(!message.guild.members.get(bot.user.id).hasPermission('CONNECT')) return message.channel.send('I don\'t have permission to join this voice channel.');
         var msg = message.content.substr(config.prefix.length + 11);
         if(!message.member.voiceChannel) return message.channel.send("**Error:** Please join a voice channel.");
         if(!msg) return message.channel.send("**Error:** Please add a YouTube link or search query.");
@@ -43,7 +43,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                 }
 
                 server.queue.push(video.link);
-                servertitle.qtitle.push(video.title);
+                servertitle.qtitle.push(video.title + "\n*Requested by: `" + message.author.tag + "`*\n ");
                 embed = new Discord.RichEmbed();
                 embed.setAuthor(`Music - ${bot.user.username}`, "https://i.imgur.com/mvwmS9z.png");
                 embed.setFooter("Cerium v." + config.ver);
@@ -114,9 +114,11 @@ module.exports.run = async (bot, message, args, Discord) => {
                 }
             }
             embed = new Discord.RichEmbed();
-            embed.setAuthor(`Queue - ${bot.user.username}`);
+            embed.setAuthor(`${message.guild.name} Queue - ${bot.user.username}`, message.guild.iconURL);
             embed.setColor(config.embedcolor);
-            embed.setFooter(`Cerium v.${config.ver}`);
+            embed.setTimestamp();
+            embed.timestamp.substr
+            embed.setFooter(`Cerium v.${config.ver} \u2022 Created by projsh_`);
             embed.addField("Up Next", musicqueuecmd);
             message.channel.send({embed: embed});
     }
