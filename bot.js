@@ -157,13 +157,6 @@ rl.on('SIGINT', function() {
     });
 });
 
-//dbl
-if (!config.beta) {
-    const dbl = require("dblposter");
-    const dblposter = new dbl(config.dblkey);
-    dblposter.bind(bot);
-}
-
 //modules loader
 fs.readdir("./modules/", (err, files) => {
     if (err) console.log(chalk.red("   [X] " + err));
