@@ -34,7 +34,7 @@ const rl = readline.createInterface({
 //dbl
 if (!config.beta) {
     const dbl = require("dblposter");
-    const dblposter = new dbl(config.dblkey);
+    const dblposter = new dbl(process.env.DBL_KEY);
     dblposter.bind(bot);
 }
 
@@ -181,7 +181,7 @@ fs.readdir("./modules/", (err, files) => {
 });
 
 //login
-bot.login(config.token).catch(function() {
+bot.login(process.env.BOT_TOKEN).catch(function() {
     console.log(chalk.red("   [X] Failed to login."));
     rl.prompt();
 });

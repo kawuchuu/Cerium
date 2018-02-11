@@ -1,5 +1,4 @@
 node_modules
 start.bat
 ffmpeg.exe
-config.json
 .vscode/launch.json

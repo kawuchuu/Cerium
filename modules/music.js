@@ -7,7 +7,7 @@ module.exports.run = async (bot, message, args, Discord) => {
 
     var opts = {
         maxResults: 3,
-        key: config.ytskey
+        key: process.env.YTS_KEY
     };
 
     switch(args[0]) {
