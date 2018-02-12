@@ -5,17 +5,17 @@ module.exports.run = async (bot, message, args) => {
     if (!args[0]) {
         embed = new Discord.RichEmbed()
             embed.setAuthor(`Help - ${bot.user.username}`, bot.user.displayAvatarURL);
-            embed.setDescription("For more information, type in `" + config.prefix + "help [command]`");
-            embed.addField("Information Commands", "about\nhelp\nhost\nrtime\nsinfo\nuinfo\nuptime", true);
+            embed.setDescription("For more information, type in `" + prefix + "help [command]`");
+            embed.addField("Information Commands", "about\nhelp\nrtime\nsinfo\nuinfo\nuptime", true);
             embed.addField("Music Commands", "**Usage:** `" + config.prefix + "music [command]`\nplay\nskip\nstop\npause\nresume", true);
             embed.addField("Miscellaneous Commands", "avatar\nflip\nnick\nping\nship", true);
             embed.setColor(config.embedcolor);
-            embed.setFooter("Cerium v." + config.ver);
+            embed.setFooter("Cerium v." + config.ver + " \u2022 Created by projsh_");
         message.channel.send({embed: embed});
     } else try {
         embed = new Discord.RichEmbed();
         embed.setColor(config.embedcolor);
-        embed.setFooter("Cerium v." + config.ver);
+        embed.setFooter("Cerium v." + config.ver + " \u2022 Created by projsh_");
         embed.setAuthor(`Help - ${bot.user.username}`, bot.user.displayAvatarURL);
         if (args[0] == "music") {
             embed.setAuthor(`Music Help - ${bot.user.username}`, bot.user.displayAvatarURL);

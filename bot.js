@@ -181,10 +181,17 @@ fs.readdir("./modules/", (err, files) => {
 });
 
 //login
-bot.login(process.env.BOT_TOKEN).catch(function() {
-    console.log(chalk.red("   [X] Failed to login."));
-    rl.prompt();
-});
+if (config.beta === true) {
+    bot.login(config.token).catch(function() {
+        console.log(chalk.red("   [X] Failed to login."));
+        rl.prompt();
+    });
+} else {
+    bot.login(process.env.BOT_TOKEN).catch(function() {
+        console.log(chalk.red("   [X] Failed to login."));
+        rl.prompt();
+    });
+}
 
 //command handler
 bot.on("message", async message => {

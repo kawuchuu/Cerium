@@ -1,4 +1,4 @@
-module.exports.run = async (bot, message, args, Discord, config, cver) => {
+module.exports.run = async (bot, message, args, Discord) => {
     var config = require('../config.json');
     embed = new Discord.RichEmbed("about");
     embed.setAuthor("About - Cerium");

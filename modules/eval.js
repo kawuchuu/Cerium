@@ -2,7 +2,7 @@ module.exports.run = async (bot, message, args, Discord) => {
     var config = require('../config.json');
     embed = new Discord.RichEmbed();
     embed.setColor(config.embedcolor);
-    embed.setFooter("Cerium v." + config.ver);
+    embed.setFooter("Cerium v." + config.ver + " \u2022 Created by projsh_");
     if (message.author.id == config.hostid) {
     var code = args.join(" ");
     var msg = message.content.substr(config.prefix.length + 5);
@@ -38,8 +38,6 @@ module.exports.run = async (bot, message, args, Discord) => {
         embed.setColor("#ff3535");
         message.channel.send({embed: embed});
     }
-    } else {
-        message.channel.send("**Error:** Only the bot's host may run this command.");
     }
 }
 module.exports.help = {

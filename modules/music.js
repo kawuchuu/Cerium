@@ -5,10 +5,17 @@ module.exports.run = async (bot, message, args, Discord) => {
     const music = require('../player.js');
     const chalk = require('chalk');
 
-    var opts = {
-        maxResults: 3,
-        key: process.env.YTS_KEY
-    };
+    if (config.beta === true) {
+        var opts = {
+            maxResults: 3,
+            key: config.ytskey
+        };
+    } else {
+        var opts = {
+            maxResults: 3,
+            key: process.env.YTS_KEY
+        };
+    }
 
     switch(args[0]) {
         case "play":
@@ -46,7 +53,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                 servertitle.qtitle.push(video.title + "\n*Requested by: `" + message.author.tag + "`*\n ");
                 embed = new Discord.RichEmbed();
                 embed.setAuthor(`Music - ${bot.user.username}`, "https://i.imgur.com/mvwmS9z.png");
-                embed.setFooter("Cerium v." + config.ver);
+                embed.setFooter("Cerium v." + config.ver + " \u2022 Created by projsh_");
                 embed.setColor(config.embedcolor);
                 embed.setDescription("Added to queue...");
                 embed.addField("Title:", video.title);

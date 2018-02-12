@@ -1,7 +1,7 @@
 module.exports.run = async (bot, message, args) => {
     const config = require("../config.json");    
     if (message.author.id == config.hostid) {
-        message.channel.send("The bot is now shutting down...").then(function() {
+        message.channel.send("Exiting Cerium...").then(function() {
         process.exit();
     });
     } else {
@@ -9,7 +9,7 @@ module.exports.run = async (bot, message, args) => {
     }
 }
 module.exports.help = {
-    name: "poweroff",
+    name: "exit",
     desc: "Powers off the bot.",
     parms: "None"
 }
