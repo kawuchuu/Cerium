@@ -8,7 +8,8 @@ function play(connection, message) {
     var servertitle = stitle[message.guild.id];
     try {
     server.dispatcher = connection.playStream(ytdl(server.queue[0], {
-        filter: "audioonly"
+        filter: "audioonly",
+        quality: "highestaudio"
     }))
 
     server.queue.shift();
