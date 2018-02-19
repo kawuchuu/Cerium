@@ -23,8 +23,8 @@
     "chalk": "^2.1.0",
     "dblposter": "^1.0.3",
     "discord.js": "^11.3.0",
+    "node-opus": "^0.2.7",
     "nodemon": "^1.12.1",
-    "opusscript": "0.0.3",
     "superagent": "^3.6.0",
     "youtube-search": "^1.0.10",
     "ytdl-core": "^0.20.1"
