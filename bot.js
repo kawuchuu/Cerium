@@ -32,9 +32,13 @@ const rl = readline.createInterface({
 });
 
 //dbl
-if (!config.beta) {
+if (config.heroku === true) {
     const dbl = require("dblposter");
     const dblposter = new dbl(process.env.DBL_KEY);
+    dblposter.bind(bot);
+} else {
+    const dbl = require("dblposter");
+    const dblposter = new dbl(config.dblkey);
     dblposter.bind(bot);
 }
 
