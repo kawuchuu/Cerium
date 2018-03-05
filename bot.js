@@ -1,7 +1,7 @@
 /***************************************
  *
  * Cerium -  A fun little Discord bot.
- * Copyright (C) 2018 Joshua Walker.
+ * Copyright (C) 2018 projsh_.
  * This software is under the terms of the GNU General Public Licence (v.3.0).
  *
  * You should have recieved a copy of this licence along with this bot.
@@ -181,13 +181,13 @@ fs.readdir("./modules/", (err, files) => {
 });
 
 //login
-if (config.beta === true) {
-    bot.login(config.token).catch(function() {
+if (config.heroku === true) {
+    bot.login(process.env.BOT_TOKEN).catch(function() {
         console.log(chalk.red("   [X] Failed to login."));
         rl.prompt();
     });
 } else {
-    bot.login(process.env.BOT_TOKEN).catch(function() {
+    bot.login(config.token).catch(function() {
         console.log(chalk.red("   [X] Failed to login."));
         rl.prompt();
     });

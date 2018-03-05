@@ -5,15 +5,15 @@ module.exports.run = async (bot, message, args, Discord) => {
     const music = require('../player.js');
     const chalk = require('chalk');
 
-    if (config.beta === true) {
+    if (config.heroku === true) {
         var opts = {
             maxResults: 3,
-            key: config.ytskey
+            key: process.env.YTS_KEY
         };
     } else {
         var opts = {
             maxResults: 3,
-            key: process.env.YTS_KEY
+            key: config.ytskey
         };
     }
 
