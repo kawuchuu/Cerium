@@ -1,6 +1,6 @@
 
 # Cerium
-A fun little Discord bot made by Joshua Walker (projsh_)
+A fun little Discord bot made by projsh_
 
 Module system by FriendsNone
 
