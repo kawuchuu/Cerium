@@ -55,7 +55,7 @@ module.exports.run = async (bot, message, args, Discord) => {
                 embed.setAuthor(`Music - ${bot.user.username}`, "https://i.imgur.com/mvwmS9z.png");
                 embed.setFooter("Cerium v." + config.ver + " \u2022 Created by projsh_");
                 embed.setColor(config.embedcolor);
-                embed.setDescription("Added to queue...");
+                embed.setDescription("**NOTICE:** Cerium's services will go offline permanently on July 16. Please visit [this link](https://projsh.github.io/cerium) for more information.\n\nAdded to queue...");
                 embed.addField("Title:", video.title);
                 embed.addField("Link:", video.link);
                 embed.addField("Channel:", video.channelTitle);

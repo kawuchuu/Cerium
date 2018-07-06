@@ -2,6 +2,7 @@ module.exports.run = async (bot, message, args, Discord) => {
     var config = require('../config.json');
     embed = new Discord.RichEmbed("about");
     embed.setAuthor("About - Cerium");
+    embed.setDescription("**NOTICE:** Cerium's services will go offline permanently on July 16. Please visit [this link](https://projsh.github.io/cerium) for more information.");
     embed.setThumbnail(bot.user.displayAvatarURL)
     embed.setColor(config.embedcolor);
     embed.addField("General Information","Cerium is a Discord bot created by projsh_\nIt's a free & open-source project available on GitHub.", true);

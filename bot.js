@@ -49,7 +49,8 @@ bot.on('ready', () => {
     if(config.beta) {
       console.log(chalk.yellow('   [!] This version of Cerium is currently in beta.'));
     }
-    bot.user.setActivity(`${prefix}help | v.${config.ver}`, { type: "LISTENING" });
+    //bot.user.setActivity(`${prefix}help | v.${config.ver}`, { type: "LISTENING" });
+    bot.user.setActivity('Going offline July 16.')
     if (config.embedcolor.length == 0 || config.embedcolor.length >= 8) {
         console.log(chalk.yellow("   [!] Embed colour is invalid."));
     }
